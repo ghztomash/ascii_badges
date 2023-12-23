@@ -1,6 +1,7 @@
 # A name badge with customisable flag background.
 import random
 import time
+import test
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
@@ -20,19 +21,14 @@ BLUE = display.create_pen(116, 215, 238)
 BROWN = display.create_pen(97, 57, 21)
 BLACK = display.create_pen(0, 0, 0)
 GREY = display.create_pen(32, 32, 32)
-# MAGENTA = display.create_pen(255, 33, 140)
+MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
-
-MAGENTA = display.create_pen_hsv(0.0, 1.0, 1.0)
+# MAGENTA = display.create_pen_hsv(0.5, 1.0, 1.0)
 
 ASCII = "!#$%&'()*+,-./0123456789:;<=>?@[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
 CHARACTER_HEIGHTS = [6, 8, 14, 8, 8, 8, 8, 8]
-
-COLOR_RANGE = []
-for i in range(0, 16):
-    COLOR_RANGE.append(display.create_pen_hsv(1.0, 1.0, 1.0)
 
 # Uncomment one of these to change flag
 # If adding your own, colour order is left to right (or top to bottom)
