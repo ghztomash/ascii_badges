@@ -66,6 +66,34 @@ FIGLET3 = """
 :.......:::::..:::::::......::::.......:::
 """
 
+FIGLET4 = """
+_|_|_|    _|_|_|_|_|            _|_|_|    
+      _|          _|    _|_|_|        _|  
+  _|_|          _|    _|          _|_|    
+      _|      _|      _|              _|  
+_|_|_|      _|          _|_|_|  _|_|_|    
+"""
+
+FIGLET5 = """
+ .::.  ...:::::  .,-::::: .::.    
+;'`';;,'''``;;',;;;'````';'`';;,  
+   .n[[    .[' [[[          .n[[  
+  ``"$$$.,$$'  $$$         ``"$$$.
+  ,,o888"888   `88bo,__,o, ,,o888"
+  YMMP"  MMM     "YUMMMMMP"YMMP"  
+"""
+
+# function to draw all decimal ascii characters
+def draw_ascii(x, y, scale=1, fixed_width=False):
+    for i in range(32, 127):
+    # for i in range(127, 160):
+        #display.text(chr(i), x, y, scale=scale)
+        display.character(i, x, y, scale=scale)
+        x += 9 * scale
+        if x > WIDTH:
+            x = 0
+            y += 9 * scale
+
 CHARACTER_SETS = [ASCII, BLOCK_ELEMENTS, BOX_ELEMENTS, DOS_ELEMENTS, FIGLET1, FIGLET2, FIGLET3]
 
 # Change details here! Works best with a short, one word name
@@ -89,40 +117,16 @@ text_size = 80
 text_y = 0
 
 
-display.set_font(FONTS[0])
+display.set_font(FONTS[1])
 
-display.set_thickness(2)
+display.set_thickness(3)
 
 # draw background
 display.set_pen(MAGENTA)
-# display.character(38, 0, 0, scale=2)
-display.text(FIGLET3, 0, 0, scale=1, fixed_width=True)
-# display.text(BLOCK_ELEMENTS, 0, 18)
-# display.text(BOX_ELEMENTS, 0, 18*2)
-# display.text(DOS_ELEMENTS, 0, 18*3)
+# display.text(FIGLET3, 0, 0, scale=1, fixed_width=True)
 
-# These loops adjust the scale of the text until it fits on the screen
-while True:
-    text_length = display.measure_text(TEXT, text_size)
-    text_height = display.measure_text("A", text_size)
-    text_y = int((HEIGHT - text_height) / 2.0) 
-
-    if text_length >= WIDTH:
-        text_size -= 1
-    else:
-        # center the text in the middle of the screen
-        print(f"Height: {text_height}")
-        print(f"y: {text_y} size: {text_size}")
-
-        # comment out this section if you hate drop shadow
-        DROP_SHADOW_OFFSET = 5
-        display.set_pen(DROP_SHADOW_COLOUR)
-        display.text(TEXT, int((WIDTH - text_length) / 2 + 10) - DROP_SHADOW_OFFSET, text_y + DROP_SHADOW_OFFSET, WIDTH, text_size)
-
-        # draw name and stop looping
-        display.set_pen(TEXT_COLOUR)
-        display.text(TEXT, int((WIDTH - text_length) / 2 + 10), text_y, WIDTH, text_size)
-        break
+draw_ascii(0, 0, scale=2, fixed_width=True)
 
 # Once all the adjusting and drawing is done, update the display.
 display.update()
+
