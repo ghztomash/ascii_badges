@@ -19,7 +19,7 @@ def hsv_to_rgb(h, s, v):
     if i == 5: return v, p, q
     
 display.set_backlight(1.0)
-# display.set_font('bitmap8')
+display.set_font('bitmap8')
 
 message = "0xDEAD 0xC0de 0xCAFE Raspberry Pi RP2040!"
 text_size = 10
