@@ -5,6 +5,7 @@ from noise import noise
 import random
 import time
 import colours
+from math import sin, cos, pi
 
 WIDTH, HEIGHT = display.get_bounds()
 
@@ -59,14 +60,16 @@ def ascii_noise(scale=1):
             y += 9 * scale
 
 # fill the screen with pixels
-def pixel_noise(scale=1):
+def pixel_noise(scale=1, x0=0, y0=0):
     x = 0
     y = 0
     columns = (WIDTH // (8 * scale)) #+ 1
     rows = HEIGHT // (8 * scale) + 1
     for i in range(columns * rows):
-        ic = (noise(x/10.0, y/10.0) + 1.0) / 2.0
-        ix = int(ic * len(PENS))
+        ic = (noise(x/500.0 + x0, y/500.0 + y0) + 1.0) / 2.0
+        # ic = random.randint(0, 127) / 127.0
+        ix = int(ic * (len(PENS)-1))
+        # print(ix)
         display.set_pen(PENS[ix])
         display.rectangle(x, y, 8*scale, 8*scale)
         x += 8 * scale
@@ -74,18 +77,18 @@ def pixel_noise(scale=1):
             x = 0
             y += 8 * scale
 
-# Change details here! Works best with a short, one word name
-TEXT = "37c3"
-
 display.set_font(FONTS[1])
 
+t = 0
+while True:
 # draw background
-display.set_pen(MAGENTA)
-# display.text(TEXT, 0, 0, scale=1, fixed_width=True)
+  display.set_pen(BLACK)
+  display.clear()
 
-# ascii_noise(2)
-pixel_noise(1)
+  pixel_noise(3, t)
+  t += 0.025
 
-# Once all the adjusting and drawing is done, update the display.
-display.update()
+  display.update()
+  time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
+
 
