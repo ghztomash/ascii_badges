@@ -85,8 +85,11 @@ FIGLET5 = """
 
 # function to draw all decimal ascii characters
 def draw_ascii(x, y, scale=1, fixed_width=False):
-    for i in range(32, 127):
+    for i in range(33, 127):
     # for i in range(127, 160):
+        display.set_pen(VIOLET)
+        display.rectangle(x, y, 8*scale, 8*scale)
+        display.set_pen(MAGENTA)
         #display.text(chr(i), x, y, scale=scale)
         display.character(i, x, y, scale=scale)
         x += 9 * scale
