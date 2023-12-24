@@ -97,20 +97,25 @@ class rain_drop:
         if self.is_offscreen():
             self.reset()
 
-display.set_font(FONTS[1])
+class Matrix:
+    def __init__(self, max, pens):# array of rain drops
+        self.drops = []
+        for _ in range(max):
+            self.drops.append(rain_drop(pens))
 
-# array of rain drops
-drops = []
-for i in range(MAX_RAIN_COUNT):
-    drops.append(rain_drop(PENS))
+    def draw(self):
+        for drop in self.drops:
+            drop.tick()
+
+display.set_font(FONTS[1])
+matrix = Matrix(MAX_RAIN_COUNT, PENS)
 
 while True:
 # draw background
   display.set_pen(BLACK)
   display.clear()
 
-  for drop in drops:
-    drop.tick()
+  matrix.draw()
 
   display.update()
   time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
