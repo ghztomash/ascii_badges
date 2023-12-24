@@ -103,5 +103,5 @@ class Colour:
     def __str__(self):
         return "Colour({}, {}, {})".format(self.r, self.g, self.b)
 
-    def get_pen(self, brightness=1.0):
+    def create_pen(self, brightness=1.0):
         return display.create_pen(int(self.r * brightness), int(self.g * brightness), int(self.b * brightness))

@@ -24,8 +24,14 @@ GREY = display.create_pen(32, 32, 32)
 MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
-# MAGENTA = display.create_pen_hsv(0.5, 1.0, 1.0)
 magenta = colours.Colour(255, 33, 140)
+PENS = [WHITE]
+for i in range(16):
+    iv = 1.0 - (i / 16.0)
+    print(iv)
+    PENS.append(magenta.create_pen(iv))
+
+print(len(PENS))
 
 ASCII = "!#$%&'()*+,-./0123456789:;<=>?@[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
@@ -92,7 +98,7 @@ class rain_drop:
             self.chars.pop()
         display.text(self.chars[0], self.x, self.y, scale=self.scale, fixed_width=True)
         # draw tail
-        display.set_pen(self.colour.get_pen())
+        display.set_pen(self.colour.create_pen())
         for i in range(1, len(self.chars)):
             display.text(self.chars[i], self.x, self.y - (i * self.char_height), scale=self.scale, fixed_width=True)
 
@@ -138,6 +144,6 @@ while True:
       drop.reset()
 
   display.update()
-  time.sleep(0.0025)  # this number is how frequently Tufty checks for button presses
+  time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
 
 ##draw_ascii(0, 0, scale=2, fixed_width=True)
