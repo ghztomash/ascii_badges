@@ -1,5 +1,4 @@
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
-display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 
 def hsv_to_rgb(h, s, v):
     if s == 0.0:
@@ -103,5 +102,12 @@ class Colour:
     def __str__(self):
         return "Colour({}, {}, {})".format(self.r, self.g, self.b)
 
-    def create_pen(self, brightness=1.0):
-        return display.create_pen(int(self.r * brightness), int(self.g * brightness), int(self.b * brightness))
+    def create_pen(self, display, brightness=1.0):
+        return display.create_pen_hsv(self.h, self.s, self.v * brightness)
+    
+    def create_fade(self, display, count=8):
+        PENS = []
+        for i in range(count):
+            iv = 1.0 - (i / float(count))
+            PENS.append(self.create_pen(display, iv))
+        return PENS

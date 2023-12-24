@@ -26,30 +26,16 @@ CYAN = display.create_pen(33, 177, 255)
 
 # generate a list of pens with varying brightness values
 magenta = colours.Colour(255, 33, 140)
-PENS = [WHITE]
-for i in range(15):
-    iv = 1.0 - (i / 16.0)
-    PENS.append(magenta.create_pen(iv))
+PENS = magenta.create_fade(display, 8)
 
-ASCII = "!#$%&'()*+,-./0123456789:;<=>?@[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
 CHARACTER_HEIGHTS = [6, 8, 14, 8, 8, 8, 8, 8]
-
-# Uncomment one of these to change flag
-# If adding your own, colour order is left to right (or top to bottom)
-COLOUR_ORDER = [BLACK] 
-# COLOUR_ORDER = [VIOLET, BLACK] 
-# COLOUR_ORDER = [RED, ORANGE, YELLOW, GREEN, INDIGO, VIOLET]  # traditional pride flag
-# COLOUR_ORDER = [BLACK, BROWN, RED, ORANGE, YELLOW, GREEN, INDIGO, VIOLET]  # Philadelphia pride flag
-# COLOUR_ORDER = [BLUE, PINK, WHITE, PINK, BLUE]  # trans flag
-# COLOUR_ORDER = [MAGENTA, YELLOW, CYAN]  # pan flag
-# COLOUR_ORDER = [MAGENTA, VIOLET, INDIGO]  # bi flag
 
 # How fast the rain should fall. In config, we change it according to screen.
 FALLING_SPEED = 20
 
 # The max number of falling rains. In config, we change it according to screen.
-MAX_RAIN_COUNT = 10
+MAX_RAIN_COUNT = 15
 
 def get_matrix_code_chars():
     l = [chr(i) for i in range(33, 127)]
@@ -90,7 +76,7 @@ class rain_drop:
 
     def draw(self):
         # draw head
-        display.set_pen(self.colour[0])
+        display.set_pen(WHITE)
         self.chars.insert(0, random_char())
         if len(self.chars) > self.length:
             self.chars.pop()
@@ -114,13 +100,6 @@ def draw_ascii(x, y, scale=1, fixed_width=False):
             x = 0
             y += 9 * scale
 
-# Draw the flag
-stripe_width = round(HEIGHT / len(COLOUR_ORDER))
-for x in range(len(COLOUR_ORDER)):
-    display.set_pen(COLOUR_ORDER[x])
-    display.rectangle(0, stripe_width * x, WIDTH, stripe_width)
-
-
 display.set_font(FONTS[0])
 
 # array of rain drops
@@ -132,10 +111,6 @@ while True:
 # draw background
   display.set_pen(BLACK)
   display.clear()
-#   display.set_pen(MAGENTA)
-#   display.text(random_char(), 0, 0, scale=2, fixed_width=True)
-
-#   draw_ascii(0, 0, scale=2, fixed_width=True)
 
   for drop in drops:
     drop.move()
@@ -146,4 +121,4 @@ while True:
   display.update()
   time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
 
-##draw_ascii(0, 0, scale=2, fixed_width=True)
+# draw_ascii(0, 0, scale=2, fixed_width=True)
