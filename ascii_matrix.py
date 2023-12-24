@@ -28,7 +28,6 @@ CYAN = display.create_pen(33, 177, 255)
 # generate a list of pens with varying brightness values
 magenta = colours.Colour(255, 33, 140)
 PENS = magenta.create_fade(display, 8)
-PENS.insert(0, WHITE)
 
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
 CHARACTER_HEIGHTS = [6, 8, 14, 8, 8, 8, 8, 8]
@@ -40,7 +39,7 @@ FALLING_SPEED = 20
 MAX_RAIN_COUNT = 15
 
 display.set_font(FONTS[1])
-matrix = Matrix(display, MAX_RAIN_COUNT, PENS, FALLING_SPEED)
+matrix = Matrix(display, MAX_RAIN_COUNT, WHITE, PENS, FALLING_SPEED)
 
 while True:
 # draw background
