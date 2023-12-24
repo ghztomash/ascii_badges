@@ -1,6 +1,6 @@
 # A name badge with customisable flag background.
-
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
+# from ascii_matrix import Matrix
 
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 
