@@ -33,26 +33,55 @@ ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"
 magenta = colours.Colour(255, 33, 140)
 PENS = magenta.create_fade(display, 8)
 
-def get_char_at_index(string, float_index):
-    index = int((len(string)-1) * float_index)
+noise_cache = [[]]
+#initialize noise_cache
+for x in range(8):
+    noise_cache.append([])
+    for y in range(8):
+        noise_cache[x].append(0)
+
+# cache noise map at a given scale and point
+def cache_noise(scale, x, y):
+    for x in range(len(noise_cache)):
+        for y in range(len(noise_cache[x])):
+            noise_cache[x][y] = (noise(x/(10.0 * scale), y/(10.0 * scale)) + 1.0) / 2.0
+
+# get noise value at a given point from the cache interpolated between the nearest points
+def get_cached_noise(x, y):
+    return 0.0
+
+def get_pen_at_index(float_index):
+    size = len(PENS)
+    index = int((size-1) * float_index)
     if index < 0:
         index = 0
-    if index >= len(string):
-        index = len(string) - 1
+    # dont want the last pen
+    if index >= size - 1:
+        index = size - 2
+    return PENS[index]
+
+def get_char_at_index(string, float_index):
+    size = len(string)
+    index = int((size-1) * float_index)
+    if index < 0:
+        index = 0
+    if index >= size:
+        index = size - 1
     return string[index]
 
 # fill the screen with pixels
-def pixel_noise(scale=1, zoom=4, x0=0, y0=0, ascii=True, pixels=False):
+def pixel_noise(scale=1, ascii=True, pixels=False):
     x = 0
     y = 0
     columns = (WIDTH // (8 * scale)) #+ 1
     rows = HEIGHT // (8 * scale) + 1
+    fx = x / WIDTH
+    fy = y / HEIGHT
     for i in range(columns * rows):
-        ic = (noise(x/(10.0 * zoom) + x0, y/(10.0 * zoom )+ y0) + 1.0) / 2.0
+        ic = get_cached_noise(fx, fy)
         # ic = random.randint(0, 127) / 127.0
-        ix = int(ic * (len(PENS)-1))
         # print(ix)
-        display.set_pen(PENS[ix])
+        display.set_pen(get_pen_at_index(ic))
         if pixels:
             display.rectangle(x, y, 8*scale, 8*scale)
         if ascii:
@@ -78,7 +107,8 @@ while True:
     y = r * cos(theta)
     theta = (theta + theta_inc) % (pi * 2)
 
-    pixel_noise(3, 100, x, y)
+    cache_noise(100, x, y)
+    pixel_noise(3)
 
     display.update()
     time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
