@@ -35,7 +35,7 @@ ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"
 magenta = colours.Colour(255, 33, 140)
 PENS = magenta.create_fade(display, 8)
 
-noise_size = (14, 10)
+noise_size = (14/4, 10/4)
 noise_cache = []
 
 #initialize noise_cache
@@ -44,20 +44,29 @@ for x in range(noise_size[0]):
     for y in range(noise_size[1]):
         noise_cache[x].append(0)
 
+cache_size = (14, 10)
+resized_cache = []
+#initialize resized_cache
+for x in range(cache_size[0]):
+    resized_cache.append([])
+    for y in range(cache_size[1]):
+        resized_cache[x].append(0)
+
 # cache noise map at a given scale and point
-def cache_noise(scale, x, y):
+def cache_noise(scale, xt, yt):
     global noise_cache
     for x in range(len(noise_cache)):
         for y in range(len(noise_cache[x])):
-            noise_cache[x][y] = (noise(x/(1.0 * scale), y/(1.0 * scale)) + 1.0) / 2.0
+            noise_cache[x][y] = (noise((x+xt)/(1.0 * scale), (y+yt)/(1.0 * scale)) + 1.0) / 2.0
+    resize.resize_array(noise_cache, cache_size, resized_cache)
 
 # get noise value at a given point from the cache
 def get_cached_noise(x, y):
-    x = int(x/WIDTH * (noise_size[0]-1))
-    y = int(y/HEIGHT * (noise_size[1]-1))
+    x = int(x/WIDTH * (cache_size[0]-1))
+    y = int(y/HEIGHT * (cache_size[1]-1))
     # print(f"x: {x}, y: {y}")
     # print(f"len: {len(interpolated_noise)}")
-    val = noise_cache[x][y]
+    val = resized_cache[x][y]
     return val
 
 def get_pen_at_index(float_index):
@@ -101,6 +110,19 @@ def pixel_noise(scale=1, ascii=True, pixels=False):
             x = 0
             y += 8 * scale
 
+def debug_arrays():
+    print("noise")
+    for row in noise_cache:
+        for val in row:
+            print(f"{val:.2f}", end=" ")
+        print()
+    print()
+    print("resized")
+    for row in resized_cache:
+        for val in row:
+            print(f"{val:.2f}", end=" ")
+        print()
+
 display.set_font(FONTS[1])
 
 r = 1
@@ -116,9 +138,10 @@ while True:
     y = r * cos(theta)
     theta = (theta + theta_inc) % (pi * 2)
 
-    cache_noise(10, x, y)
+    cache_noise(1, x, y)
     pixel_noise(SCALE, True, True)
 
     display.update()
-    time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
-    break
+    # time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
+    # debug_arrays()
+    # break

@@ -15,10 +15,8 @@ def bilinear_interpolation(x, y, arr):
 
     return interp
 
-def resize_array(arr, new_shape):
+def resize_array(arr, new_shape, new_arr):
     old_shape = [len(arr), len(arr[0])]
-    new_arr = [[0 for _ in range(new_shape[1])] for _ in range(new_shape[0])]
-
     for i in range(new_shape[0]):
         for j in range(new_shape[1]):
             # Calculate the corresponding position in the old array
@@ -26,5 +24,3 @@ def resize_array(arr, new_shape):
             y = (j / (new_shape[1] - 1)) * (old_shape[1] - 1) if new_shape[1] > 1 else 0
             # Perform bilinear interpolation at this position
             new_arr[i][j] = bilinear_interpolation(x, y, arr)
-
-    return new_arr
