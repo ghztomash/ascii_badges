@@ -1,3 +1,6 @@
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040
+display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+
 def hsv_to_rgb(h, s, v):
     if s == 0.0:
         return v, v, v
@@ -50,3 +53,55 @@ def rgb_to_hsv(r, g, b):
 
 	v = cmax * 100
 	return h / 360.0, s / 100.0, v / 100.0
+
+class Colour:
+    def __init__(self, r, g, b):
+        self.set_rgb(r, g, b)
+
+    def set_rgb(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
+        hsv = rgb_to_hsv(r, g, b)
+        self.h = hsv[0]
+        self.s = hsv[1]
+        self.v = hsv[2]
+    
+    def set_hue(self, hue):
+        self.h = hue
+        rgb = hsv_to_rgb(hue, self.s, self.v)
+        self.r = rgb[0]
+        self.g = rgb[1]
+        self.b = rgb[2]
+    
+    def set_saturation(self, saturation):
+        self.s = saturation
+        rgb = hsv_to_rgb(self.h, saturation, self.v)
+        self.r = rgb[0]
+        self.g = rgb[1]
+        self.b = rgb[2]
+    
+    def set_value(self, value):
+        self.v = value
+        rgb = hsv_to_rgb(self.h, self.s, value)
+        self.r = rgb[0]
+        self.g = rgb[1]
+        self.b = rgb[2]
+
+    def set_hsv(self, h, s, v):
+        self.h = h
+        self.s = s
+        self.v = v
+        rgb = hsv_to_rgb(h, s, v)
+        self.r = rgb[0]
+        self.g = rgb[1]
+        self.b = rgb[2]
+
+    def set_brightness(self, brightness):
+        self.brightness = brightness
+
+    def __str__(self):
+        return "Colour({}, {}, {})".format(self.r, self.g, self.b)
+
+    def get_pen(self, brightness=1.0):
+        return display.create_pen(int(self.r * brightness), int(self.g * brightness), int(self.b * brightness))

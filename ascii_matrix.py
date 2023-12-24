@@ -1,7 +1,7 @@
 # A name badge with customisable flag background.
 import random
 import time
-import test
+import colours
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
@@ -25,6 +25,7 @@ MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
 # MAGENTA = display.create_pen_hsv(0.5, 1.0, 1.0)
+magenta = colours.Colour(255, 33, 140)
 
 ASCII = "!#$%&'()*+,-./0123456789:;<=>?@[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
@@ -47,7 +48,7 @@ FALLING_SPEED = 20
 MAX_RAIN_COUNT = 20
 
 def get_matrix_code_chars():
-    l = [chr(i) for i in range(32, 127)]
+    l = [chr(i) for i in range(33, 127)]
     # half-width katakana. See https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms
     # l.extend([chr(i) for i in range(0xFF66, 0xFF9D)])
     return l
@@ -76,7 +77,7 @@ class rain_drop:
         self.y = 0
         self.length = random_rain_length()
         self.speed = random_rain_speed()
-        self.char = random_char()
+        self.chars = [random_char()]
         self.scale = random.randint(1, 2)
         self.char_height = self.scale * 8
 
@@ -86,18 +87,21 @@ class rain_drop:
     def draw(self):
         # draw head
         display.set_pen(WHITE)
-        display.text(random_char(), self.x, self.y, scale=self.scale, fixed_width=True)
+        self.chars.insert(0, random_char())
+        if len(self.chars) > self.length:
+            self.chars.pop()
+        display.text(self.chars[0], self.x, self.y, scale=self.scale, fixed_width=True)
         # draw tail
-        display.set_pen(self.colour)
-        for i in range(1, self.length):
-            display.text(random_char(), self.x, self.y - (i * self.char_height), scale=self.scale, fixed_width=True)
+        display.set_pen(self.colour.get_pen())
+        for i in range(1, len(self.chars)):
+            display.text(self.chars[i], self.x, self.y - (i * self.char_height), scale=self.scale, fixed_width=True)
 
     def is_offscreen(self):
         return self.y > HEIGHT + self.length * self.char_height
 
 # function to draw all decimal ascii characters
 def draw_ascii(x, y, scale=1, fixed_width=False):
-    for i in range(32, 127):
+    for i in range(33, 127):
         display.character(i, x, y, scale=scale)
         x += 9 * scale
         if x > WIDTH:
@@ -116,14 +120,16 @@ display.set_font(FONTS[0])
 # array of rain drops
 drops = []
 for i in range(MAX_RAIN_COUNT):
-    drops.append(rain_drop(MAGENTA))
+    drops.append(rain_drop(magenta))
 
 while True:
 # draw background
   display.set_pen(BLACK)
   display.clear()
-  display.set_pen(MAGENTA)
-  display.text(random_char(), 0, 0, scale=2, fixed_width=True)
+#   display.set_pen(MAGENTA)
+#   display.text(random_char(), 0, 0, scale=2, fixed_width=True)
+
+#   draw_ascii(0, 0, scale=2, fixed_width=True)
 
   for drop in drops:
     drop.move()
