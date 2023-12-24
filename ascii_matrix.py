@@ -37,16 +37,16 @@ FALLING_SPEED = 20
 # The max number of falling rains. In config, we change it according to screen.
 MAX_RAIN_COUNT = 15
 
-def get_matrix_code_chars():
-    l = [chr(i) for i in range(33, 127)]
+def get_chars():
+    l = [i for i in range(33, 127)]
     # half-width katakana. See https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms
     # l.extend([chr(i) for i in range(0xFF66, 0xFF9D)])
     return l
 
-MATRIX_CODE_CHARS = get_matrix_code_chars()
+CODE_CHARS = get_chars()
 
 def random_char():
-    return random.choice(MATRIX_CODE_CHARS)
+    return random.choice(CODE_CHARS)
 
 def random_rain_length():
     return random.randint(5, 30)
@@ -80,27 +80,24 @@ class rain_drop:
         self.chars.insert(0, random_char())
         if len(self.chars) > self.length:
             self.chars.pop()
-        display.text(self.chars[0], self.x, self.y, scale=self.scale, fixed_width=True)
+        display.character(self.chars[0], self.x, self.y, scale=self.scale)
         # draw tail
         length = len(self.chars)
         for i in range(1, length):
             ci = int(i / length * (len(self.colour) - 1)) 
             display.set_pen(self.colour[ci])
-            display.text(self.chars[i], self.x, self.y - (i * self.char_height), scale=self.scale, fixed_width=True)
+            display.character(self.chars[i], self.x, self.y - (i * self.char_height), scale=self.scale)
 
     def is_offscreen(self):
         return self.y > HEIGHT + self.length * self.char_height
+    
+    def tick(self):
+        self.move()
+        self.draw()
+        if self.is_offscreen():
+            self.reset()
 
-# function to draw all decimal ascii characters
-def draw_ascii(x, y, scale=1, fixed_width=False):
-    for i in range(33, 127):
-        display.character(i, x, y, scale=scale)
-        x += 9 * scale
-        if x > WIDTH:
-            x = 0
-            y += 9 * scale
-
-display.set_font(FONTS[0])
+display.set_font(FONTS[1])
 
 # array of rain drops
 drops = []
@@ -113,10 +110,7 @@ while True:
   display.clear()
 
   for drop in drops:
-    drop.move()
-    drop.draw()
-    if drop.is_offscreen():
-      drop.reset()
+    drop.tick()
 
   display.update()
   time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
