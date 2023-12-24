@@ -24,14 +24,12 @@ GREY = display.create_pen(32, 32, 32)
 MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
+# generate a list of pens with varying brightness values
 magenta = colours.Colour(255, 33, 140)
 PENS = [WHITE]
-for i in range(16):
+for i in range(15):
     iv = 1.0 - (i / 16.0)
-    print(iv)
     PENS.append(magenta.create_pen(iv))
-
-print(len(PENS))
 
 ASCII = "!#$%&'()*+,-./0123456789:;<=>?@[]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
@@ -51,7 +49,7 @@ COLOUR_ORDER = [BLACK]
 FALLING_SPEED = 20
 
 # The max number of falling rains. In config, we change it according to screen.
-MAX_RAIN_COUNT = 20
+MAX_RAIN_COUNT = 10
 
 def get_matrix_code_chars():
     l = [chr(i) for i in range(33, 127)]
@@ -92,14 +90,16 @@ class rain_drop:
 
     def draw(self):
         # draw head
-        display.set_pen(WHITE)
+        display.set_pen(self.colour[0])
         self.chars.insert(0, random_char())
         if len(self.chars) > self.length:
             self.chars.pop()
         display.text(self.chars[0], self.x, self.y, scale=self.scale, fixed_width=True)
         # draw tail
-        display.set_pen(self.colour.create_pen())
-        for i in range(1, len(self.chars)):
+        length = len(self.chars)
+        for i in range(1, length):
+            ci = int(i / length * (len(self.colour) - 1)) 
+            display.set_pen(self.colour[ci])
             display.text(self.chars[i], self.x, self.y - (i * self.char_height), scale=self.scale, fixed_width=True)
 
     def is_offscreen(self):
@@ -126,7 +126,7 @@ display.set_font(FONTS[0])
 # array of rain drops
 drops = []
 for i in range(MAX_RAIN_COUNT):
-    drops.append(rain_drop(magenta))
+    drops.append(rain_drop(PENS))
 
 while True:
 # draw background
