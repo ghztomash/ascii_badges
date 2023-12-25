@@ -31,6 +31,7 @@ while True:
     tufty.tick()
     (vbat, on_usb, low_battery) = tufty.get_battery()
     (luminance, backlight) = tufty.get_brightness()
+    percentage = tufty.get_battery_percentage()
 
     # Show our measurements.
     display.set_pen(WHITE)
@@ -45,7 +46,7 @@ while True:
     if on_usb:
         display.text("Battery: Ignored, on USB.", 8, 48 + (20 * 2), WIDTH - 8, 2)
     else:
-        display.text(f"Battery: {vbat:.2f}v", 8, 48 + (20 * 2), WIDTH - 8, 2)
+        display.text(f"Battery: {vbat:.2f}v, {percentage}%", 8, 48 + (20 * 2), WIDTH - 8, 2)
 
     display.text("Hold A to pretend the room is bright.", 8, HEIGHT - (20 * 4), WIDTH - 8, 2)
     display.text("Hold B to pretend the battery is low.", 8, HEIGHT - (20 * 2), WIDTH - 8, 2)

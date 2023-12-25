@@ -22,6 +22,8 @@ LUMINANCE_HIGH = micropython.const(2048)  # 65535 to use the full range.
 # The bottom of the Tufty2040 input range is 3.0v, so values below that likely
 # will not trigger before it cuts out.
 LOW_BATTERY_VOLTAGE = micropython.const(3.1)
+EMPTY_BATTERY_VOLTAGE = micropython.const(2.5)
+FULL_BATTERY_VOLTAGE = micropython.const(3.7)
 
 # Pins and analogue-digital converters we need to set up to measure sensors.
 lux_vref_pwr = Pin(27, Pin.OUT)
@@ -56,7 +58,25 @@ def measure_battery() -> (float, bool, bool):
     low_battery = False
     if vbat < LOW_BATTERY_VOLTAGE:
         low_battery = True
+
     return (vbat, False, low_battery)
+
+def battery_percentage(vbat: float) -> int:
+    # Map the battery voltage to a percentage.
+    if vbat < EMPTY_BATTERY_VOLTAGE:
+        return 0
+    if vbat > FULL_BATTERY_VOLTAGE:
+        return 100
+
+    percentage = 100 * ((vbat - EMPTY_BATTERY_VOLTAGE) / (FULL_BATTERY_VOLTAGE - EMPTY_BATTERY_VOLTAGE))
+    if percentage > 100:
+        percentage = 100
+    if percentage < 0:
+        percentage = 0
+
+    return int(percentage)
+
+
 
 class TuftyBoard:
     def __init__(self, display):
@@ -66,11 +86,13 @@ class TuftyBoard:
         self.vbat = LOW_BATTERY_VOLTAGE
         self.on_usb = False
         self.low_battery = False
+        self.bat_percent = 0
     
     def tick(self):
         # Turn on VREF and LUX only while we measure things.
         lux_vref_pwr.value(1)
         (self.vbat, self.on_usb, self.low_battery) = measure_battery()
+        self.bat_percent = battery_percentage(self.vbat)
         if self.low_battery:
             backlight = BACKLIGHT_LOW
         else:
@@ -85,3 +107,6 @@ class TuftyBoard:
     
     def get_brightness(self):
         return (self.luminance, self.backlight)
+    
+    def get_battery_percentage(self):
+        return self.bat_percent

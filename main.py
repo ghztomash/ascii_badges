@@ -3,8 +3,11 @@ from os import listdir
 import time, math, random, gc
 from pimoroni import Button
 from colours import hsv_to_rgb
+import tuftyboard
 
 display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB332, rotate=180)
+tufty = tuftyboard.TuftyBoard(display)
+tufty.tick()
 
 def get_applications():
     # fetch a list of the applications that are stored in the filesystem
@@ -59,7 +62,7 @@ button_up = Button(22, invert=False)
 button_down = Button(6, invert=False)
 button_a = Button(7, invert=False)
 
-display.set_backlight(1.0)
+# display.set_backlight(1.0)
 
 WHITE = display.create_pen(255, 255, 255)
 BLACK = display.create_pen(0, 0, 0)
@@ -145,4 +148,5 @@ while True:
     #display.set_pen(WHITE)
     #display.text("Pick An Example", 2, 2, -1, 3)
     
+    tufty.tick()
     display.update()
