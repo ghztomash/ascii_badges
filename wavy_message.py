@@ -1,15 +1,17 @@
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332
 import math, time
 from colours import hsv_to_rgb
+import tuftyboard
 
-display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB332, rotate=180)
+display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+tufty = tuftyboard.TuftyBoard(display)
 
 WIDTH, HEIGHT = display.get_bounds()
 
 display.set_backlight(1.0)
 display.set_font('bitmap8')
 
-message = "DEAD C0DE CAFE!"
+message = "0xDEADBEEF 0x1CEDFACE 0xC0DECAFE"
 text_size = 10
 message_width = display.measure_text(message, text_size)
 
@@ -17,6 +19,7 @@ x_scroll = 0
 
 while 1:
     t = time.ticks_ms() / 1000.0
+    tufty.tick()
     display.set_pen(display.create_pen(50, 50, 50))
     display.clear()
 
@@ -41,3 +44,4 @@ while 1:
             display.text(message[i], cx, cy, -1, text_size)
 
     display.update()
+    time.sleep(0.025)  # this number is how frequently Tufty checks for button presses

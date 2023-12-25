@@ -6,7 +6,7 @@ import micropython
 
 # Constants for automatic brightness adjustment.
 # Below about 3/8ths, the backlight is entirely off. The top of the range is OK.
-BACKLIGHT_LOW = micropython.const(0.375)
+BACKLIGHT_LOW = micropython.const(0.45)
 BACKLIGHT_HIGH = micropython.const(1.0)
 
 # The luminance sensor seems to cover the whole 16-bit range pretty well from
@@ -93,10 +93,11 @@ class TuftyBoard:
         lux_vref_pwr.value(1)
         (self.vbat, self.on_usb, self.low_battery) = measure_battery()
         self.bat_percent = battery_percentage(self.vbat)
-        if self.low_battery:
-            backlight = BACKLIGHT_LOW
-        else:
-            (self.luminance, self.backlight) = auto_brightness(self.backlight)
+        if self.on_usb:
+            self.backlight = BACKLIGHT_HIGH
+        elif self.low_battery:
+            self.backlight = BACKLIGHT_LOW
+        (self.luminance, self.backlight) = auto_brightness(self.backlight)
         lux_vref_pwr.value(0)
 
         # Set the new backlight value.

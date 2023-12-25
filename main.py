@@ -106,7 +106,7 @@ while True:
     grid_size = 40
     for y in range(0, 240 / grid_size):
         for x in range(0, 320 / grid_size):
-            h = x + y + int(t * 5)
+            h = x + y + int(t * 5.0)
             h = h / 50.0
             r, g, b = hsv_to_rgb(h, .5, 1)
             
