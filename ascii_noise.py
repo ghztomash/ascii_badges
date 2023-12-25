@@ -11,6 +11,12 @@ from math import sin, cos, pi
 WIDTH, HEIGHT = display.get_bounds()
 SCALE = 3
 
+GRID_WIDTH = (WIDTH // (8 * SCALE)) + 1
+GRID_HEIGHT = HEIGHT // (8 * SCALE)
+
+print(f"width: {WIDTH}, height: {HEIGHT}")
+print(f"grid_width: {GRID_WIDTH}, grid_height: {GRID_HEIGHT}")
+
 # List of available pen colours, add more if necessary
 RED = display.create_pen(209, 34, 41)
 ORANGE = display.create_pen(246, 138, 30)
@@ -35,7 +41,7 @@ ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"
 magenta = colours.Colour(255, 33, 140)
 PENS = magenta.create_fade(display, 8)
 
-noise_size = (14/4, 10/4)
+noise_size = (GRID_WIDTH/4, GRID_HEIGHT/4)
 noise_cache = []
 
 #initialize noise_cache
@@ -44,7 +50,7 @@ for x in range(noise_size[0]):
     for y in range(noise_size[1]):
         noise_cache[x].append(0)
 
-cache_size = (14, 10)
+cache_size = (GRID_WIDTH, GRID_HEIGHT)
 resized_cache = []
 #initialize resized_cache
 for x in range(cache_size[0]):
@@ -58,6 +64,7 @@ def cache_noise(scale, xt, yt):
     for x in range(len(noise_cache)):
         for y in range(len(noise_cache[x])):
             noise_cache[x][y] = (noise((x+xt)/(1.0 * scale), (y+yt)/(1.0 * scale)) + 1.0) / 2.0
+            # noise_cache[x][y] = random.randint(0, 127) / 127.0
     resize.resize_array(noise_cache, cache_size, resized_cache)
 
 # get noise value at a given point from the cache
@@ -92,9 +99,7 @@ def get_char_at_index(string, float_index):
 def pixel_noise(scale=1, ascii=True, pixels=False):
     x = 0
     y = 0
-    columns = (WIDTH // (8 * scale)) #+ 1
-    rows = HEIGHT // (8 * scale) + 1
-    for i in range(columns * rows):
+    for i in range(GRID_WIDTH * GRID_HEIGHT):
         ic = get_cached_noise(x, y)
         # ic = random.randint(0, 127) / 127.0
         # print(ix)
@@ -103,7 +108,7 @@ def pixel_noise(scale=1, ascii=True, pixels=False):
             display.rectangle(x, y, 8*scale, 8*scale)
         if ascii:
             char = get_char_at_index(ascii_chars, ic)
-            display.set_pen(get_pen_at_index(0))
+            # display.set_pen(get_pen_at_index(0))
             display.text(char, x, y, scale=scale)
         x += 8 * scale
         if x > WIDTH:
@@ -139,7 +144,7 @@ while True:
     theta = (theta + theta_inc) % (pi * 2)
 
     cache_noise(1, x, y)
-    pixel_noise(SCALE, True, True)
+    pixel_noise(SCALE)
 
     display.update()
     # time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
