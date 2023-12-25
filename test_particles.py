@@ -2,8 +2,7 @@ import tuftyboard
 import time
 import colours
 import random
-from particles import Particle, Vector
-
+from particles import Particle, Vector, AsciiParticle
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
@@ -35,7 +34,7 @@ CYAN = display.create_pen(33, 177, 255)
 center = Vector(WIDTH/2, HEIGHT/2)
 
 display.set_font(FONTS[0])
-particle = Particle(display, center, Vector(random.uniform(-5, 5), random.uniform(-5, 5)))
+particle = AsciiParticle(display, center, Vector(random.uniform(-5, 5), random.uniform(-5, 5)))
 
 while True:
     tufty.tick()
@@ -45,9 +44,7 @@ while True:
     particle.update()
     if particle.is_offscreen():
         particle.position = center
-        particle.velocity = Vector(random.uniform(-5, 5), random.uniform(-5, 5))
-        particle.acceleration = Vector(random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1))
-        particle.size = random.uniform(5, 20)
+        particle.reset()
 
     # draw background
     display.set_pen(BLACK)
@@ -58,7 +55,9 @@ while True:
 
     # draw particle
     display.set_pen(CYAN)
-    display.circle(int(particle.position.x), int(particle.position.y), int(particle.size))
+    # display.circle(int(particle.position.x), int(particle.position.y), int(particle.size))
+    # display.character(particle.chars[0], int(particle.position.x), int(particle.position.y), int(particle.size))
+    particle.draw()
 
     # Once all the adjusting and drawing is done, update the display.
     display.update()

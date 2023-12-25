@@ -42,7 +42,7 @@ class RainDrop:
         return self.y > self.height + self.length * self.char_height
 
     def random_char(self):
-        return random.randint(33, 127)
+        return random.randint(33, 126)
 
 class Matrix:
     def __init__(self, display, max_size, head_pen, pens, max_speed):# array of rain drops
