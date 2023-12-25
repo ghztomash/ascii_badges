@@ -4,6 +4,8 @@ import colours
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+
+# board control
 tufty = tuftyboard.TuftyBoard(display)
 tufty.tick()
 
@@ -27,17 +29,18 @@ GREY = display.create_pen(32, 32, 32)
 MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
-display.set_font(FONTS[1])
+display.set_font(FONTS[0])
 
 while True:
+    tufty.tick()
+    fps = tufty.get_fps()
+
     # draw background
     display.set_pen(BLACK)
     display.clear()
     # draw text
     display.set_pen(MAGENTA)
-    display.text("Hello World!", 0, 0, scale=2, fixed_width=True)
+    display.text(f"fps: {fps}", 0, 0)
 
     # Once all the adjusting and drawing is done, update the display.
     display.update()
-    time.sleep(0.025)
-    break
