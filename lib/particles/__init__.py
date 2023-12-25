@@ -22,13 +22,16 @@ class Vector:
 
 
 class Particle:
-    def __init__(self, display, position: Vector, velocity: Vector, acceleration: Vector):
+    def __init__(self, display, position: Vector, velocity: Vector = Vector(0, 0), acceleration: Vector = Vector(0, 0), 
+                 size = 1.0, lifetime = 1000.0):
         self.display = display
         (self.width, self.height) = display.get_bounds()
         self.position = position
         self.velocity = velocity
         self.acceleration = acceleration
-        self.lifetime = 1
+        self.size = size
+        self.age = 0
+        self.lifetime = lifetime
 
     def update(self, dt: float = 1.0):
         # Update velocity
@@ -36,13 +39,13 @@ class Particle:
         # Update position
         self.position += self.velocity * dt
         # Update lifetime
-        self.lifetime += dt
+        self.age += dt
 
     def is_alive(self) -> bool:
-        return self.lifetime > 0
+        return self.age < self.lifetime
 
     def is_offscreen(self) -> bool:
-        return self.position.x < 0 or self.position.x > self.width or self.position.y < 0 or self.position.y > self.height
+        return self.position.x - self.size < 0 or self.position.x + self.size > self.width or self.position.y + self.size < 0 or self.position.y + self.size > self.height
 
     def random_char(self):
         return random.randint(33, 127)
