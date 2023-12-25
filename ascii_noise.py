@@ -41,7 +41,7 @@ ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"
 magenta = colours.Colour(255, 33, 140)
 PENS = magenta.create_fade(display, 8)
 
-noise_size = (GRID_WIDTH/4, GRID_HEIGHT/4)
+noise_size = (GRID_WIDTH/8, GRID_HEIGHT/8)
 noise_cache = []
 
 #initialize noise_cache

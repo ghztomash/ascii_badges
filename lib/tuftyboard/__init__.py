@@ -1,8 +1,8 @@
 
-import time
 from machine import ADC, Pin
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 import micropython
+import time
 
 # Constants for automatic brightness adjustment.
 # Below about 3/8ths, the backlight is entirely off. The top of the range is OK.
@@ -87,6 +87,8 @@ class TuftyBoard:
         self.on_usb = False
         self.low_battery = False
         self.bat_percent = 0
+        self.fps = 0.0
+        self.last_frame_time = time.ticks_ms() / 1000.0
     
     def tick(self):
         # Turn on VREF and LUX only while we measure things.
@@ -102,12 +104,22 @@ class TuftyBoard:
 
         # Set the new backlight value.
         self.display.set_backlight(self.backlight)
-    
+
+        # Calculate time difference
+        current_time = time.ticks_ms() / 1000.0
+        delta_time = current_time - self.last_frame_time
+        self.last_frame_time = current_time
+        # Calculate frames per second
+        self.fps = 1.0 / (delta_time + 1e-10)
+
     def get_battery(self):
         return (self.vbat, self.on_usb, self.low_battery)
-    
+
     def get_brightness(self):
         return (self.luminance, self.backlight)
-    
+
     def get_battery_percentage(self):
         return self.bat_percent
+
+    def get_fps(self):
+        return self.fps
