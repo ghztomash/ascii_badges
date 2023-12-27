@@ -8,6 +8,11 @@ import colours
 import resize
 from math import sin, cos, pi
 
+import tuftyboard
+# board control
+tufty = tuftyboard.TuftyBoard(display)
+tufty.tick()
+
 WIDTH, HEIGHT = display.get_bounds()
 SCALE = 3
 
@@ -38,7 +43,7 @@ FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", 
 ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^`"
 
 # generate a list of pens with varying brightness values
-magenta = colours.Colour(255, 33, 140)
+magenta = colours.Colour(255, 33, 140).set_saturation(1.0)
 PENS = magenta.create_fade(display, 8)
 
 noise_size = (GRID_WIDTH/8, GRID_HEIGHT/8)
@@ -138,6 +143,9 @@ while True:
     # draw background
     display.set_pen(BLACK)
     display.clear()
+    display.set_pen(MAGENTA)
+    tufty.tick()
+    tufty.draw_fps()
 
     x = r * sin(theta)
     y = r * cos(theta)

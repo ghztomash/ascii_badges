@@ -1,4 +1,5 @@
 # A name badge with customisable flag background.
+import tuftyboard
 import random
 import time
 import colours
@@ -6,6 +7,10 @@ from matrix import Matrix
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+
+# board control
+tufty = tuftyboard.TuftyBoard(display)
+tufty.tick()
 
 WIDTH, HEIGHT = display.get_bounds()
 
@@ -26,7 +31,7 @@ MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
 # generate a list of pens with varying brightness values
-magenta = colours.Colour(255, 33, 140)
+magenta = colours.Colour(255, 33, 140).set_saturation(1.0)
 PENS = magenta.create_fade(display, 8)
 
 FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
@@ -42,13 +47,16 @@ display.set_font(FONTS[1])
 matrix = Matrix(display, MAX_RAIN_COUNT, WHITE, PENS, FALLING_SPEED)
 
 while True:
-# draw background
+  # draw background
   display.set_pen(BLACK)
   display.clear()
+  display.set_pen(MAGENTA)
+  tufty.tick()
+  tufty.draw_fps()
 
   matrix.draw()
 
   display.update()
-  time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
+#   time.sleep(0.025)  # this number is how frequently Tufty checks for button presses
 
 # draw_ascii(0, 0, scale=2, fixed_width=True)
