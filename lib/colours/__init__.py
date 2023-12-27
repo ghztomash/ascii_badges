@@ -79,6 +79,7 @@ class Colour:
         self.r = rgb[0]
         self.g = rgb[1]
         self.b = rgb[2]
+        return self
     
     def set_value(self, value):
         self.v = value
