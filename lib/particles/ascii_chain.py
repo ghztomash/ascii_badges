@@ -9,18 +9,19 @@ class AsciiChain:
     def __init__(
         self,
         display,
+        head_colour,
+        tail_colours,
         source: Vector,
         velocity: Vector = Vector(0, 0),
         acceleration: Vector = Vector(0, 0),
         scale=1.0,
-        size=10,
-        lifetime=1000.0,
+        size=8,
         length=1,
         char_rate=250,
     ):
         self.display = display
         self.particles = [
-            Particle(display, source, velocity, acceleration, scale, False, lifetime)
+            Particle(display, source, velocity, acceleration, scale)
         ]
         self.source = source
         self.size = size * scale
@@ -29,6 +30,8 @@ class AsciiChain:
         self.chars: [int] = [random_char() for _ in range(length)]
         self.char_rate = char_rate
         self.length = length
+        self.head_colour = head_colour
+        self.tail_colours = tail_colours
         self.last_char_ms = ticks_ms()
 
     def update(self, dt: float = 1.0):
@@ -38,11 +41,11 @@ class AsciiChain:
             else:
                 last_position = self.source
 
-            angle = self.particles[0].velocity.angle()-math.pi
-            position = point_at_angle(last_position, angle, self.size)
-
-            self.particles.append(Particle(self.display, position))
-            self.chain = RigidChain(self.particles, distance = self.size)
+            # add a new particle if the last one is far enough away
+            distance_from_source = last_position.subtract(self.source).length()
+            if distance_from_source > self.size:
+                self.particles.append(Particle(self.display, self.source))
+                self.chain = RigidChain(self.particles, distance = self.size)
 
         self.chain.update(dt)
 
@@ -54,17 +57,17 @@ class AsciiChain:
             self.last_char_ms = ticks_ms()
 
     def reset(self):
-        # self.length = random.randint(3, 10)
-        self.length = 5
+        self.length = random.randint(5, 20)
         head = self.particles[0]
         head.position = self.source
         head.velocity = random_vector(5.0)
         self.particles = [head]
         # self.acceleration = Vector(random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1))
-        # self.scale = random.uniform(1, 5)
+        self.scale = random.uniform(1, 3)
+        self.size = self.scale * 8
         self.chars = [random_char() for i in range(self.length)]
-        # self.char_rate = random.uniform(250, 500) * (1.0 / self.velocity.dot(self.velocity)) + 50
-        self.char_rate = 250
+        self.char_rate = random.uniform(250, 500) * (1.0 / head.velocity.length()) + 50
+        # self.char_rate = 250
         # print(f"char_rate: {self.char_rate}")
         self.last_char_ms = ticks_ms()
         self.age = 0
@@ -80,7 +83,15 @@ class AsciiChain:
     def draw(self):
         i = 0
         display = self.display
+        length = len(self.particles)
+        colours_length = len(self.tail_colours)
         for particle in self.particles:
+            if i == 0:
+                display.set_pen(self.head_colour)
+            else:
+                ci = int(i / length * colours_length - 1)
+                display.set_pen(self.tail_colours[ci])
+
             display.character(
                 self.chars[i], int(particle.position.x), int(particle.position.y), scale=int(self.scale)
             )

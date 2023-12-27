@@ -41,11 +41,15 @@ GREY = display.create_pen(32, 32, 32)
 MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
+# generate a list of pens with varying brightness values
+magenta = colours.Colour(255, 33, 140)
+PENS = magenta.create_fade(display, 8)
+
 center = Vector(WIDTH / 2, HEIGHT / 2)
 
-display.set_font(FONTS[0])
+display.set_font(FONTS[1])
 
-chain = AsciiChain(display, center, random_vector(2), size=8, length=4)
+chain = AsciiChain(display, WHITE, PENS, center, random_vector(2), size=8, length=4)
 
 bounce = True
 
