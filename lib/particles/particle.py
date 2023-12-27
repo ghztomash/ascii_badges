@@ -1,5 +1,5 @@
 import math
-
+import random
 
 class Vector:
     def __init__(self, x, y):

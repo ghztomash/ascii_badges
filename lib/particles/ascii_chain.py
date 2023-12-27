@@ -1,6 +1,7 @@
 import random
 import time
-from particles.particle import Particle, Vector, random_vector
+import math
+from particles.particle import Particle, Vector, random_vector, point_at_angle
 from particles.joints import RigidChain
 
 
@@ -31,16 +32,19 @@ class AsciiChain:
         self.last_char_ms = ticks_ms()
 
     def update(self, dt: float = 1.0):
-        if len(self.particles) > 0:
-            last_position = self.particles[-1].position
-        else:
-            last_position = self.source
+        if len(self.particles) < len(self.chars):
+            if len(self.particles) > 0:
+                last_position = self.particles[-1].position
+            else:
+                last_position = self.source
+
+            angle = self.particles[0].velocity.angle()-math.pi
+            position = point_at_angle(last_position, angle, self.size)
+
+            self.particles.append(Particle(self.display, position))
+            self.chain = RigidChain(self.particles, distance = self.size)
 
         self.chain.update(dt)
-
-        if len(self.particles) < len(self.chars):
-            self.particles.append(Particle(self.display, last_position))
-            self.chain = RigidChain(self.particles, distance = self.size)
 
         # set a new head character if enough time has passed
         if ticks_ms() - self.last_char_ms > self.char_rate:
@@ -51,8 +55,9 @@ class AsciiChain:
 
     def reset(self):
         # self.length = random.randint(3, 10)
-        self.length = 10
+        self.length = 5
         head = self.particles[0]
+        head.position = self.source
         head.velocity = random_vector(5.0)
         self.particles = [head]
         # self.acceleration = Vector(random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1))
