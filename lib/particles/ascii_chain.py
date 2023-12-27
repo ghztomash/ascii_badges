@@ -15,7 +15,7 @@ class AsciiChain:
         velocity: Vector = Vector(0, 0),
         acceleration: Vector = Vector(0, 0),
         scale=1.0,
-        size=8,
+        char_height=8,
         length=1,
         char_rate=250,
     ):
@@ -24,7 +24,8 @@ class AsciiChain:
             Particle(display, source, velocity, acceleration, scale)
         ]
         self.source = source
-        self.size = size * scale
+        self.char_height = char_height
+        self.size = char_height * scale
         self.scale = scale
         self.chain = RigidChain(self.particles, distance = self.size)
         self.chars: [int] = [random_char() for _ in range(length)]
@@ -57,17 +58,17 @@ class AsciiChain:
             self.last_char_ms = ticks_ms()
 
     def reset(self):
-        self.length = random.randint(5, 20)
+        self.length = random.randint(5, 10)
         head = self.particles[0]
         head.position = self.source
-        head.velocity = random_vector(5.0)
+        head.velocity = random_vector(10.0)
+        head.acceleration = random_vector(0.5)
         self.particles = [head]
-        # self.acceleration = Vector(random.uniform(-0.1, 0.1), random.uniform(-0.1, 0.1))
         self.scale = random.uniform(1, 3)
-        self.size = self.scale * 8
+        self.size = self.scale * self.char_height
         self.chars = [random_char() for i in range(self.length)]
-        self.char_rate = random.uniform(250, 500) * (1.0 / head.velocity.length()) + 50
-        # self.char_rate = 250
+        self.char_rate = random.uniform(50, 250) * (1.0 / head.velocity.length()) + 50
+        # self.char_rate = 150
         # print(f"char_rate: {self.char_rate}")
         self.last_char_ms = ticks_ms()
         self.age = 0
@@ -104,5 +105,5 @@ def random_char():
 
 # MicroPython compatibility
 def ticks_ms():
-    # return time.ticks_ms()
-    return int(time.time() * 1000)
+    return time.ticks_ms()
+    # return int(time.time() * 1000)
