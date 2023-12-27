@@ -2,9 +2,10 @@ import tuftyboard
 import time
 import colours
 import random
-from particles import Particle, Vector, AsciiParticle
+from particles import Particle, Vector, random_vector
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
+
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 
 # board control
@@ -13,7 +14,16 @@ tufty.tick()
 
 WIDTH, HEIGHT = display.get_bounds()
 
-FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
+FONTS = [
+    "bitmap6",
+    "bitmap8",
+    "bitmap14_outline",
+    "sans",
+    "gothic",
+    "cursive",
+    "serif",
+    "serif_italic",
+]
 
 # List of available pen colours, add more if necessary
 RED = display.create_pen(209, 34, 41)
@@ -31,20 +41,22 @@ GREY = display.create_pen(32, 32, 32)
 MAGENTA = display.create_pen(255, 33, 140)
 CYAN = display.create_pen(33, 177, 255)
 
-center = Vector(WIDTH/2, HEIGHT/2)
+center = Vector(WIDTH / 2, HEIGHT / 2)
 
 display.set_font(FONTS[0])
-particle = AsciiParticle(display, center, Vector(random.uniform(-5, 5), random.uniform(-5, 5)))
+particle = Particle(
+    display, center, random_vector(10)
+)
 
 while True:
     tufty.tick()
     fps = tufty.get_fps()
-    
+
     # update particle
     particle.update()
     if particle.is_offscreen():
         particle.position = center
-        particle.reset()
+        particle.velocity = random_vector(10)
 
     # draw background
     display.set_pen(BLACK)
@@ -55,9 +67,9 @@ while True:
 
     # draw particle
     display.set_pen(CYAN)
-    # display.circle(int(particle.position.x), int(particle.position.y), int(particle.size))
-    # display.character(particle.chars[0], int(particle.position.x), int(particle.position.y), int(particle.size))
-    particle.draw()
+    display.circle(
+        int(particle.position.x), int(particle.position.y), int(particle.scale * 10)
+    )
 
     # Once all the adjusting and drawing is done, update the display.
     display.update()
