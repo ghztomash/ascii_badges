@@ -89,7 +89,7 @@ text_size = 80
 text_y = 0
 
 
-display.set_font(FONTS[0])
+display.set_font(FONTS[1])
 
 display.set_thickness(2)
 
