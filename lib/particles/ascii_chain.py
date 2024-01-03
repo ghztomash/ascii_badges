@@ -61,7 +61,7 @@ class AsciiChain:
         self.length = random.randint(5, 10)
         head = self.particles[0]
         head.position = self.source
-        head.velocity = random_vector(10.0)
+        head.velocity = random_vector(5.0)
         head.acceleration = random_vector(0.5)
         self.particles = [head]
         self.scale = random.uniform(1, 3)
