@@ -122,10 +122,11 @@ while True:
         resize_text()
         text_y = 175
     if button_up.is_pressed:
-        AUTO_BRIGHTNESS = not AUTO_BRIGHTNESS
-        if not AUTO_BRIGHTNESS:
-            print("Auto brightness off")
-            display.set_backlight(1.0)
+        AUTO_BRIGHTNESS = False
+        display.set_backlight(1.0)
+    if button_down.is_pressed:
+        AUTO_BRIGHTNESS = True
+
     if AUTO_BRIGHTNESS:
         tufty.tick()
     # draw background
