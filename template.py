@@ -39,7 +39,7 @@ while True:
     display.clear()
     # draw text
     display.set_pen(MAGENTA)
-    tufty.draw_fps()
+    tufty.draw_fps(scale=2)
 
     # Once all the adjusting and drawing is done, update the display.
     display.update()
