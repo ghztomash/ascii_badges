@@ -127,4 +127,4 @@ class TuftyBoard:
     def draw_fps(self):
         if not self.on_usb:
             return
-        self.display.text("fps: {:.1f}".format(self.fps), 0, 0, scale=1)
+        self.display.text("fps: {:.2f}".format(self.fps), 0, 0, scale=2)

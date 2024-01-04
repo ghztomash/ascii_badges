@@ -10,7 +10,7 @@ led.freq(1000)
 led.duty_u16(32768)
 
 led_value = 0
-led_incriment = 0.025
+led_increment = 0.025
 
 lux_pwr = Pin(27, Pin.OUT)
 lux_pwr.value(1)
@@ -84,7 +84,7 @@ while True:
         brightness = clamp(brightness - 0.1, 0.4, 1)
         display.set_backlight(brightness)
         print(brightness)
-        
+
 
     display.set_pen(BLACK)
     display.clear()
@@ -107,8 +107,8 @@ while True:
     display.update()
     
     if led_value >= 1.0 or led_value <= 0.0:
-        led_incriment *= -1.0
-    led_value += led_incriment
+        led_increment *= -1.0
+    led_value += led_increment
     led_value = clamp(led_value,0,1)
     led.duty_u16(int(led_value*65535.0))
 

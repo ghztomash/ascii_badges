@@ -33,14 +33,13 @@ display.set_font(FONTS[0])
 
 while True:
     tufty.tick()
-    fps = tufty.get_fps()
 
     # draw background
     display.set_pen(BLACK)
     display.clear()
     # draw text
     display.set_pen(MAGENTA)
-    display.text(f"fps: {fps}", 0, 0)
+    tufty.draw_fps()
 
     # Once all the adjusting and drawing is done, update the display.
     display.update()
