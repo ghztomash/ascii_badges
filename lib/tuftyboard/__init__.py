@@ -1,6 +1,6 @@
 
 from machine import ADC, Pin
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040
+from picographics import PicoGraphics
 import micropython
 import time
 
@@ -25,11 +25,14 @@ LOW_BATTERY_VOLTAGE = micropython.const(3.1)
 EMPTY_BATTERY_VOLTAGE = micropython.const(2.5)
 FULL_BATTERY_VOLTAGE = micropython.const(3.7)
 
+CONVERSION_FACTOR = micropython.const(3.3 / (65535))
+
 # Pins and analogue-digital converters we need to set up to measure sensors.
 lux_vref_pwr = Pin(27, Pin.OUT)
 lux = ADC(26)
 vbat_adc = ADC(29)
 vref_adc = ADC(28)
+temp_adc = ADC(4)
 usb_power = Pin(24, Pin.IN)
 
 # Returns a tuple of the raw luminance value, and the brightness to now use.
@@ -76,7 +79,10 @@ def battery_percentage(vbat: float) -> int:
 
     return int(percentage)
 
-
+def measure_temperature() -> float:
+    # See the temperature.py example for how this works.
+    vtemp = temp_adc.read_u16() * CONVERSION_FACTOR
+    return 27 - (vtemp - 0.706) / 0.001721
 
 class TuftyBoard:
     def __init__(self, display):
@@ -88,6 +94,7 @@ class TuftyBoard:
         self.low_battery = False
         self.bat_percent = 0
         self.fps = 0.0
+        self.temp = 0.0
         self.last_frame_time = time.ticks_ms() / 1000.0
     
     def tick(self):
@@ -101,6 +108,8 @@ class TuftyBoard:
             self.backlight = BACKLIGHT_LOW
         (self.luminance, self.backlight) = auto_brightness(self.backlight)
         lux_vref_pwr.value(0)
+
+        self.temp = measure_temperature()
 
         # Set the new backlight value.
         self.display.set_backlight(self.backlight)
@@ -128,3 +137,6 @@ class TuftyBoard:
         if not self.on_usb:
             return
         self.display.text("fps: {:.2f}".format(self.fps), 0, 0, scale=scale)
+    
+    def get_temperature(self):
+        return self.temp
