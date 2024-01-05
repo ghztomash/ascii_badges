@@ -12,8 +12,8 @@ button_down = Button(6, invert=False)
 
 from particles import Particle, Vector, AsciiChain, random_vector
 
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040
-display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
+display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB565)
 tufty = tuftyboard.TuftyBoard(display)
 tufty.tick()
 

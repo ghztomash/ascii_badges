@@ -1,8 +1,6 @@
 # A name badge with customisable flag background.
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040
-# from ascii_matrix import Matrix
-
-display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
+display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB565)
 
 WIDTH, HEIGHT = display.get_bounds()
 

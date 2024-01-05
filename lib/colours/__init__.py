@@ -97,9 +97,6 @@ class Colour:
         self.g = rgb[1]
         self.b = rgb[2]
 
-    def set_brightness(self, brightness):
-        self.brightness = brightness
-
     def __str__(self):
         return "Colour({}, {}, {})".format(self.r, self.g, self.b)
 
