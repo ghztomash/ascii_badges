@@ -4,9 +4,13 @@
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 import time
 import tuftyboard
+import machine
+from pimoroni import Button
 
 display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 tufty = tuftyboard.TuftyBoard(display)
+
+button_c = Button(9, invert=False)
 
 # set up some colours to draw with
 WHITE = display.create_pen(255, 255, 255)
@@ -18,6 +22,9 @@ RED = display.create_pen(255, 0, 0)
 display.set_font("bitmap8")
 
 while True:
+    if button_c.read():
+        machine.reset()
+    
     tufty.tick()
     (vbat, on_usb, low_battery) = tufty.get_battery()
     percentage = tufty.get_battery_percentage()
@@ -47,4 +54,4 @@ while True:
     display.text('{:.0f}%'.format(percentage), 15, 50, 240, 5)
 
     display.update()
-    time.sleep(0.05)
+    time.sleep(0.5)
