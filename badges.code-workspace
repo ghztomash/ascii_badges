@@ -1,15 +1,23 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"name": "Pico (W) Remote Workspace",
-			"uri": "pico:"
-		}
-	],
-	"settings": {
-		"python.languageServer": "Pylance",
-		"micropico.syncFolder": ""
-	}
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "name": "Pico (W) Remote Workspace",
+            "uri": "pico:"
+        }
+    ],
+    "settings": {
+        "python.languageServer": "Pylance",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.analysis.diagnosticSeverityOverrides": {
+            "reportMissingModuleSource": "none"
+        },
+        "python.analysis.typeshedPaths": [
+            ".venv/Lib/site-packages",
+            "typings"
+        ],
+        "micropico.syncFolder": ""
+    }
 }

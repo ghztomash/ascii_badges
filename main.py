@@ -1,13 +1,14 @@
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
 from os import listdir
-import time, math, random, gc
+import time, gc, sys
 from pimoroni import Button
-from colours import hsv_to_rgb
 import tuftyboard
 
-display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB332, rotate=180)
+display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB332)
 tufty = tuftyboard.TuftyBoard(display)
 tufty.tick()
+
+debug_mode = True
 
 def get_applications():
     # fetch a list of the applications that are stored in the filesystem
@@ -24,7 +25,6 @@ def get_applications():
                     "title": title
                 }
             )
-            
     # sort the application list alphabetically by title and return the list
     return sorted(applications, key=lambda x: x["title"])
 
@@ -36,24 +36,14 @@ def launch_application(application):
             del locals()[k]
 
     gc.collect()
-
     __import__(application["file"])
-    
-applications = get_applications()
-# display.set_font("sans")
 
-# Reads name from file, and then closes the file.
-# try:
-#     file = open("badge.txt", "r")
-#     name = file.readline()
-#     file.close()
-# //except OSError:
-# //    name = "open name.txt in thonny to edit badge :)"
+applications = get_applications()
 
 # Tufty constants
 #A = 7
 #B = 8
-#C = 15
+#C = 9
 #UP = 22
 #DOWN = 6
 #LED = 25
@@ -61,13 +51,9 @@ applications = get_applications()
 button_up = Button(22, invert=False)
 button_down = Button(6, invert=False)
 button_a = Button(7, invert=False)
+button_c = Button(9, invert=False)
 
 # display.set_backlight(1.0)
-
-WHITE = display.create_pen(255, 255, 255)
-BLACK = display.create_pen(0, 0, 0)
-RED = display.create_pen(200, 0, 0)
-
 
 def text(text, x, y, pen, s):
     display.set_pen(pen)
@@ -78,10 +64,10 @@ selected_item = 2
 scroll_position = 2
 target_scroll_position = 2
 
-selected_pen = display.create_pen(255, 255, 255)
-unselected_pen = display.create_pen(80, 80, 100)
-background_pen = display.create_pen(50, 50, 70)
-shadow_pen = display.create_pen(0, 0, 0)
+selected_pen = display.create_pen(0xdb, 0x93, 0xf9)
+unselected_pen = display.create_pen(0x44, 0x47, 0x5a)
+background_pen = display.create_pen(0x00, 0x00, 0x00)
+debug_pen = display.create_pen(0x50, 0xfa, 0x7b)
 
 while True:
     t = time.ticks_ms() / 1000.0
@@ -96,31 +82,33 @@ while True:
 
     if button_a.read():
         launch_application(applications[selected_item])
-        
+
+    if button_c.read():
+        debug_mode = not debug_mode
+
     display.set_pen(background_pen)
     display.clear()
-    
+
+    tufty.tick()
+    if debug_mode:
+        text("Sel: " + str(selected_item) + "/" + str(len(applications)), 5, 5, debug_pen, 2)
+        text(f"FPS: {tufty.get_fps():.2f}", 5, 20, debug_pen, 2)
+        battery = tufty.get_battery()
+        battery_level = str(tufty.get_battery_percentage()) + "% " if not battery[1] else "USB "
+        text("Bat: " + battery_level + str(battery[0]) + "V", 5, 35, debug_pen, 2)
+        text(f"Temp: {tufty.get_temperature():.2f}C", 5, 50, debug_pen, 2)
+        text(f"Lux: {tufty.get_brightness()[0]:.0f}", 5, 65, debug_pen, 2)
+        text("Mem: " + str(gc.mem_free()), 5, 80, debug_pen, 2)
+        version = sys.version.split(";")[1].split(",")[0].strip()
+        text(str(version), 5, 95, debug_pen, 2)
+
     scroll_position += (target_scroll_position - scroll_position) / 5
     
-    
-    grid_size = 40
-    for y in range(0, 240 / grid_size):
-        for x in range(0, 320 / grid_size):
-            h = x + y + int(t * 5.0)
-            h = h / 50.0
-            r, g, b = hsv_to_rgb(h, .5, 1)
-            
-            display.set_pen(display.create_pen(r, g, b))
-            display.rectangle(x * grid_size, y * grid_size, grid_size, grid_size)
-            
     # work out which item is selected (closest to the current scroll position)
     selected_item = round(target_scroll_position)
     
-    start = time.ticks_ms()
-    
     for list_index, application in enumerate(applications):
         distance = list_index - scroll_position
-        
 
         text_size = 4 if selected_item == list_index else 3
 
@@ -133,20 +121,9 @@ while True:
         # center list items vertically
         text_y = int(120 + distance * row_height - (row_height / 2))
         
-        # draw the text, selected item brightest and with shadow
-        if selected_item == list_index:
-          text(application["title"], text_x + 1, text_y + 1, shadow_pen, text_size)
-          
         text_pen = selected_pen if selected_item == list_index else unselected_pen
         text(application["title"], text_x, text_y, text_pen, text_size)
 
-    start = time.ticks_ms()
-
-    #display.set_pen(BLACK)
-    #display.rectangle(0, 0, 320, 30)
-    
-    #display.set_pen(WHITE)
-    #display.text("Pick An Example", 2, 2, -1, 3)
-    
-    tufty.tick()
     display.update()
+    gc.collect()
+    time.sleep(0.025)
