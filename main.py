@@ -1,6 +1,7 @@
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
 from os import listdir
 import time, gc, sys
+import machine
 from pimoroni import Button
 import tuftyboard
 
@@ -91,16 +92,24 @@ while True:
 
     tufty.tick()
     if debug_mode:
-        text("Sel: " + str(selected_item) + "/" + str(len(applications)), 5, 5, debug_pen, 2)
-        text(f"FPS: {tufty.get_fps():.2f}", 5, 20, debug_pen, 2)
+        ly = 5
+        text(f"FPS: {tufty.get_fps():.2f}", 5, ly, debug_pen, 2)
+        ly += 15
         battery = tufty.get_battery()
         battery_level = str(tufty.get_battery_percentage()) + "% " if not battery[1] else "USB "
-        text("Bat: " + battery_level + str(battery[0]) + "V", 5, 35, debug_pen, 2)
-        text(f"Temp: {tufty.get_temperature():.2f}C", 5, 50, debug_pen, 2)
-        text(f"Lux: {tufty.get_brightness()[0]:.0f}", 5, 65, debug_pen, 2)
-        text("Mem: " + str(gc.mem_free()), 5, 80, debug_pen, 2)
+        text("Bat: " + battery_level + str(battery[0]) + "V", 5, ly, debug_pen, 2)
+        ly += 15
+        text(f"Temp: {tufty.get_temperature():.2f}C", 5, ly, debug_pen, 2)
+        ly += 15
+        text(f"Lux: {tufty.get_brightness()[0]:.0f}", 5, ly, debug_pen, 2)
+        ly += 15
+        text("Mem: " + str(gc.mem_free()), 5, ly, debug_pen, 2)
+        ly += 15
+        text("Cpu: " + str(machine.freq() / 1_000_000) + " MHz", 5, ly, debug_pen, 2)
+        ly += 15
         version = sys.version.split(";")[1].split(",")[0].strip()
-        text(str(version), 5, 95, debug_pen, 2)
+        text(str(version), 5, ly, debug_pen, 2)
+        ly += 15
 
     scroll_position += (target_scroll_position - scroll_position) / 5
     

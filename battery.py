@@ -23,7 +23,7 @@ display.set_font("bitmap8")
 
 while True:
     if button_c.read():
-        machine.reset()
+        machine.soft_reset()
     
     tufty.tick()
     (vbat, on_usb, low_battery) = tufty.get_battery()
