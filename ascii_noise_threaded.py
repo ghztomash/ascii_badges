@@ -7,7 +7,7 @@ import colours
 import _thread
 
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
-display = PicoGraphics(display=DISPLAY_TUFTY_2040)
+display = PicoGraphics(display=DISPLAY_TUFTY_2040) 
 
 # board control
 tufty = tuftyboard.TuftyBoard(display)
@@ -15,24 +15,24 @@ tufty.tick()
 
 WIDTH, HEIGHT = display.get_bounds()
 
-FONTS = ["bitmap6", "bitmap8", "bitmap14_outline", "sans", "gothic", "cursive", "serif", "serif_italic"]
-
 # List of available pen colours, add more if necessary
-RED = display.create_pen(209, 34, 41)
+RED = display.create_pen(255, 0, 0)
 WHITE = display.create_pen(255, 255, 255)
 BLACK = display.create_pen(0, 0, 0)
-CYAN = display.create_pen(33, 177, 255)
 
 # generate a list of pens with varying brightness values
-white = colours.Colour(255, 255, 0)
-PENS = white.create_fade(display, count=8)
+magenta = colours.Colour(255, 33, 140).set_saturation(1.0)
+PENS = magenta.create_fade(display, 8)
 
-display.set_font(FONTS[1])
+ascii_chars = "$@B%8&MW#*hokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^`"
 
-BOX = 20
+display.set_font("bitmap8")
 
-GRID_W = WIDTH // BOX
-GRID_H = HEIGHT // BOX
+SCALE = 3
+BOX = SCALE * 8
+
+GRID_W= (WIDTH // (8 * SCALE)) + 1
+GRID_H= HEIGHT // (8 * SCALE)
 GRID_SIZE = GRID_W * GRID_H 
 # grid 2d array of values 
 grid = []
@@ -82,21 +82,6 @@ def calculate_grid_perlinInt(index):
         y = i // GRID_W
         g[write_index][i] = (perlin_noise.NoiseInt(x << 13, y << 13, z) + 65536) >> 9
 
-# 428ms
-def calculate_grid_noise(index=0):
-    z = index << 13
-    noise_func = perlin_noise.NoiseInt
-    grid_w = GRID_W
-    grid_size = GRID_SIZE
-
-    g = [
-        (noise_func((i % grid_w) << 13, (i // grid_w) << 13, z) + 65536) >> 9
-        for i in range(grid_size)
-    ]
-
-    global grid
-    grid[write_index] = g
-
 def calculate_grid(index):
     calculate_grid_perlinInt(index)
 
@@ -119,21 +104,20 @@ def core1_thread():
     grid_w = GRID_W
     grid_size = GRID_SIZE
 
+    g = [0] * grid_size
     while True:
         before = time.ticks_ms()
-        z = t << 10
-        g = [
-            (noise_func((i % grid_w) << 12, (i // grid_w) << 12, z) + 65536) >> 9
-            for i in range(grid_size)
-        ]
+        z = t << 11
+
+        for i in range(grid_size):
+            g[i] = (noise_func((i % grid_w) << 11, (i // grid_w) << 11, z) + 65536) >> 9
 
         lock.acquire()
-        grid[write_index] = g.copy()
+        grid[write_index] = g
         write_index = (write_index + 1) % buffer_size
         read_index = (read_index + 1) % buffer_size
         lock.release()
 
-        del g
         t += 1
         after = time.ticks_ms()
 
@@ -142,21 +126,12 @@ def core1_thread():
         # print(f"read_index: {read_index} write_index: {write_index}")
         time.sleep_ms(1)
 
-
-_thread.start_new_thread(core1_thread, ())
-
-while True:
-    tufty.tick()
-
-    # draw background
-    display.set_pen(BLACK)
-    display.clear()
-    ly = 0
-
+def draw_grid():
+    global grid_benchmark, draw_benchmark
     before = time.ticks_ms()
     
     lock.acquire()
-    g = grid[read_index].copy()
+    g = grid[read_index]
     lock.release()
 
     after = time.ticks_ms()
@@ -169,12 +144,25 @@ while True:
             value = g[index] >> 5
             pen = PENS[value]
             display.set_pen(pen)
-            display.rectangle(x * BOX, y * BOX, BOX, BOX)
+            # display.rectangle(x * BOX, y * BOX, BOX, BOX)
+            value = g[index] >> 2
+            char = ascii_chars[value]
+            # display.set_pen(WHITE)
+            display.text(char, x * BOX, y * BOX, scale=SCALE)
     after = time.ticks_ms()
     draw_benchmark = after - before
 
-    g.clear()
-    del g
+_thread.start_new_thread(core1_thread, ())
+
+while True:
+    tufty.tick()
+
+    # draw background
+    display.set_pen(BLACK)
+    display.clear()
+    ly = 0
+
+    draw_grid()
 
     # draw text
     display.set_pen(RED)
