@@ -1,5 +1,5 @@
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
-display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB565)
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040
+display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 from noise import noise
 import random
 import time

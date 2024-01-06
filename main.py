@@ -11,6 +11,7 @@ tufty.tick()
 
 debug_mode = True
 
+@micropython.native
 def get_applications():
     # fetch a list of the applications that are stored in the filesystem
     applications = []
@@ -29,6 +30,7 @@ def get_applications():
     # sort the application list alphabetically by title and return the list
     return sorted(applications, key=lambda x: x["title"])
 
+@micropython.native
 def launch_application(application):
     #wait_for_user_to_release_buttons()
 
@@ -56,6 +58,7 @@ button_c = Button(9, invert=False)
 
 # display.set_backlight(1.0)
 
+@micropython.native
 def text(text, x, y, pen, s):
     display.set_pen(pen)
     display.text(text, x, y, -1, s)

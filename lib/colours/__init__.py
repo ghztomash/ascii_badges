@@ -1,5 +1,6 @@
 from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 
+@micropython.native
 def hsv_to_rgb(h, s, v):
     if s == 0.0:
         return v, v, v
@@ -27,6 +28,7 @@ def hsv_to_rgb(h, s, v):
         return v, p, q
 
 # convert rgb values to hsv in the range 0f 0.0 - 1.0
+@micropython.native
 def rgb_to_hsv(r, g, b):
 	r, g, b = r / 255.0, g / 255.0, b / 255.0
 
@@ -54,9 +56,11 @@ def rgb_to_hsv(r, g, b):
 	return h / 360.0, s / 100.0, v / 100.0
 
 class Colour:
+    @micropython.native
     def __init__(self, r, g, b):
         self.set_rgb(r, g, b)
 
+    @micropython.native
     def set_rgb(self, r, g, b):
         self.r = r
         self.g = g
@@ -66,6 +70,7 @@ class Colour:
         self.s = hsv[1]
         self.v = hsv[2]
     
+    @micropython.native
     def set_hue(self, hue):
         self.h = hue
         rgb = hsv_to_rgb(hue, self.s, self.v)
@@ -73,6 +78,7 @@ class Colour:
         self.g = rgb[1]
         self.b = rgb[2]
     
+    @micropython.native
     def set_saturation(self, saturation):
         self.s = saturation
         rgb = hsv_to_rgb(self.h, saturation, self.v)
@@ -81,6 +87,7 @@ class Colour:
         self.b = rgb[2]
         return self
     
+    @micropython.native
     def set_value(self, value):
         self.v = value
         rgb = hsv_to_rgb(self.h, self.s, value)
@@ -88,6 +95,7 @@ class Colour:
         self.g = rgb[1]
         self.b = rgb[2]
 
+    @micropython.native
     def set_hsv(self, h, s, v):
         self.h = h
         self.s = s
@@ -97,12 +105,15 @@ class Colour:
         self.g = rgb[1]
         self.b = rgb[2]
 
+    @micropython.native
     def __str__(self):
         return "Colour({}, {}, {})".format(self.r, self.g, self.b)
 
+    @micropython.native
     def create_pen(self, display, brightness=1.0):
         return display.create_pen_hsv(self.h, self.s, self.v * brightness)
     
+    @micropython.native
     def create_fade(self, display, count=8):
         PENS = []
         for i in range(count):

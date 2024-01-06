@@ -36,6 +36,7 @@ temp_adc = ADC(4)
 usb_power = Pin(24, Pin.IN)
 
 # Returns a tuple of the raw luminance value, and the brightness to now use.
+@micropython.native
 def auto_brightness(previous: float) -> (float, float):
     luminance = lux.read_u16()
     luminance_frac = max(0.0, float(luminance - LUMINANCE_LOW))
@@ -50,6 +51,7 @@ def auto_brightness(previous: float) -> (float, float):
 
 
 # Returns a tuple of voltage (fake value if on USB), "is on USB", and "is low".
+@micropython.native
 def measure_battery() -> (float, bool, bool):
     if usb_power.value():
         return (5.0, True, False)
@@ -64,6 +66,7 @@ def measure_battery() -> (float, bool, bool):
 
     return (vbat, False, low_battery)
 
+@micropython.native
 def battery_percentage(vbat: float) -> int:
     # Map the battery voltage to a percentage.
     if vbat < EMPTY_BATTERY_VOLTAGE:
@@ -79,12 +82,14 @@ def battery_percentage(vbat: float) -> int:
 
     return int(percentage)
 
+@micropython.native
 def measure_temperature() -> float:
     # See the temperature.py example for how this works.
     vtemp = temp_adc.read_u16() * CONVERSION_FACTOR
     return 27 - (vtemp - 0.706) / 0.001721
 
 class TuftyBoard:
+    @micropython.native
     def __init__(self, display):
         self.display = display
         self.backlight = BACKLIGHT_LOW
@@ -97,6 +102,7 @@ class TuftyBoard:
         self.temp = 0.0
         self.last_frame_time = time.ticks_ms() / 1000.0
     
+    @micropython.native
     def tick(self):
         # Turn on VREF and LUX only while we measure things.
         lux_vref_pwr.value(1)
@@ -121,22 +127,28 @@ class TuftyBoard:
         # Calculate frames per second
         self.fps = 1.0 / (delta_time + 1e-10)
 
+    @micropython.native
     def get_battery(self):
         return (self.vbat, self.on_usb, self.low_battery)
 
+    @micropython.native
     def get_brightness(self):
         return (self.luminance, self.backlight)
 
+    @micropython.native
     def get_battery_percentage(self):
         return self.bat_percent
 
+    @micropython.native
     def get_fps(self):
         return self.fps
 
+    @micropython.native
     def draw_fps(self, scale=1):
         if not self.on_usb:
             return
         self.display.text("fps: {:.2f}".format(self.fps), 0, 0, scale=scale)
     
+    @micropython.native
     def get_temperature(self):
         return self.temp
