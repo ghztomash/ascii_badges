@@ -142,7 +142,7 @@ while True:
     # draw background
     display.set_pen(BLACK)
     display.clear()
-    display.set_pen(MAGENTA)
+    display.set_pen(GREEN)
     tufty.tick()
     tufty.draw_fps()
 
