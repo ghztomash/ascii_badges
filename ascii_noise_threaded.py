@@ -25,6 +25,7 @@ WIDTH, HEIGHT = display.get_bounds()
 
 # List of available pen colours, add more if necessary
 RED = display.create_pen(0xff, 0x55, 0x55)
+GREEN = display.create_pen(0x50, 0xfa, 0x7b)
 WHITE = display.create_pen(255, 255, 255)
 BLACK = display.create_pen(0, 0, 0)
 
@@ -36,7 +37,7 @@ ascii_chars = "$@B%8&MW#*hokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^
 
 display.set_font("bitmap8")
 
-debug_mode = True
+debug_mode = False
 
 def setup(scale: int = 3):
     global GRID_W, GRID_H, GRID_SIZE, grid, read_index, write_index, SCALE, BOX, buffer_size
@@ -167,7 +168,7 @@ def draw_grid():
 def draw_debug():
     # draw text
     ly = 0
-    display.set_pen(RED)
+    display.set_pen(GREEN)
     tufty.draw_fps(scale=2)
     ly += 20
     display.text("Grid: " + str(grid_benchmark), 0, ly)
@@ -182,12 +183,6 @@ setup(scale=2)
 _thread.start_new_thread(core1_thread, ())
 
 while True:
-    if button_a.is_pressed:
-        NAME = ""
-        PRONOUNS = ""
-    if button_b.is_pressed:
-        NAME = "37c3"
-        PRONOUNS = "UNLOCKED"
     if button_c.is_pressed:
         debug_mode = not debug_mode
     if button_up.is_pressed:
