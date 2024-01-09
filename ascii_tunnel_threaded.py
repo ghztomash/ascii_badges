@@ -90,7 +90,7 @@ while True:
     display.clear()
 
     # draw text
-    display.set_pen(MAGENTA)
+    display.set_pen(GREEN)
     tufty.draw_fps()
 
     lock.acquire()
