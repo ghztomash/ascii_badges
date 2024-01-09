@@ -17,12 +17,6 @@ WIDTH, HEIGHT = display.get_bounds()
 FONTS = [
     "bitmap6",
     "bitmap8",
-    "bitmap14_outline",
-    "sans",
-    "gothic",
-    "cursive",
-    "serif",
-    "serif_italic",
 ]
 
 # List of available pen colours, add more if necessary
