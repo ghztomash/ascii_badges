@@ -107,7 +107,7 @@ def core1_thread():
     g = [0] * grid_size
     while True:
         before = time.ticks_ms()
-        z = t << 11
+        z = t << 10
 
         for i in range(grid_size):
             g[i] = (noise_func((i % grid_w) << 11, (i // grid_w) << 11, z) + 65536) >> 9
