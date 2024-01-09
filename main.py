@@ -1,15 +1,15 @@
-from picographics import PicoGraphics, DISPLAY_TUFTY_2040, PEN_RGB332, PEN_RGB565
+from picographics import PicoGraphics, DISPLAY_TUFTY_2040
 from os import listdir
 import time, gc, sys
 import machine
 from pimoroni import Button
 import tuftyboard
 
-display = PicoGraphics(display=DISPLAY_TUFTY_2040, pen_type=PEN_RGB332)
+display = PicoGraphics(display=DISPLAY_TUFTY_2040)
 tufty = tuftyboard.TuftyBoard(display)
 tufty.tick()
 
-debug_mode = True
+debug_mode = False
 
 @micropython.native
 def get_applications():
@@ -94,25 +94,6 @@ while True:
     display.clear()
 
     tufty.tick()
-    if debug_mode:
-        ly = 5
-        text(f"FPS: {tufty.get_fps():.2f}", 5, ly, debug_pen, 2)
-        ly += 15
-        battery = tufty.get_battery()
-        battery_level = str(tufty.get_battery_percentage()) + "% " if not battery[1] else "USB "
-        text("Bat: " + battery_level + str(battery[0]) + "V", 5, ly, debug_pen, 2)
-        ly += 15
-        text(f"Temp: {tufty.get_temperature():.2f}C", 5, ly, debug_pen, 2)
-        ly += 15
-        text(f"Lux: {tufty.get_brightness()[0]:.0f}", 5, ly, debug_pen, 2)
-        ly += 15
-        text("Mem: " + str(gc.mem_free()), 5, ly, debug_pen, 2)
-        ly += 15
-        text("Cpu: " + str(machine.freq() / 1_000_000) + " MHz", 5, ly, debug_pen, 2)
-        ly += 15
-        version = sys.version.split(";")[1].split(",")[0].strip()
-        text(str(version), 5, ly, debug_pen, 2)
-        ly += 15
 
     scroll_position += (target_scroll_position - scroll_position) / 5
     
@@ -135,6 +116,26 @@ while True:
         
         text_pen = selected_pen if selected_item == list_index else unselected_pen
         text(application["title"], text_x, text_y, text_pen, text_size)
+
+    if debug_mode:
+        ly = 5
+        text(f"FPS: {tufty.get_fps():.2f}", 5, ly, debug_pen, 2)
+        ly += 15
+        battery = tufty.get_battery()
+        battery_level = str(tufty.get_battery_percentage()) + "% " if not battery[1] else "USB "
+        text("Bat: " + battery_level + str(battery[0]) + "V", 5, ly, debug_pen, 2)
+        ly += 15
+        text(f"Temp: {tufty.get_temperature():.2f}C", 5, ly, debug_pen, 2)
+        ly += 15
+        text(f"Lux: {tufty.get_brightness()[0]:.0f}", 5, ly, debug_pen, 2)
+        ly += 15
+        text("Mem: " + str(gc.mem_free()), 5, ly, debug_pen, 2)
+        ly += 15
+        text("Cpu: " + str(machine.freq() / 1_000_000) + " MHz", 5, ly, debug_pen, 2)
+        ly += 15
+        version = sys.version.split(";")[1].split(",")[0].strip()
+        text(str(version), 5, ly, debug_pen, 2)
+        ly += 15
 
     display.update()
     gc.collect()
