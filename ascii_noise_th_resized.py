@@ -4,6 +4,7 @@ import noise
 import perlin_noise
 import random
 import colours
+import resize
 import _thread
 from pimoroni import Button
 
@@ -37,16 +38,24 @@ ascii_chars = "$@B%8&MW#*hokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^
 
 display.set_font("bitmap8")
 
-debug_mode = False
+debug_mode = tufty.on_usb
 
+# 6.5fps draw 90ms core 200ms
 def setup(scale: int = 3):
     global GRID_W, GRID_H, GRID_SIZE, grid, read_index, write_index, SCALE, BOX, buffer_size
+    global CACHE_W, CACHE_H, CACHE_SIZE, grid_cache
     SCALE = scale
     BOX = SCALE * 8
 
-    GRID_W= (WIDTH // (8 * SCALE)) + 1
-    GRID_H= HEIGHT // (8 * SCALE)
+    GRID_W = (WIDTH // (8 * SCALE)) + 1
+    GRID_H = HEIGHT // (8 * SCALE)
     GRID_SIZE = GRID_W * GRID_H 
+
+    CACHE_W = GRID_W // 4
+    CACHE_H = GRID_H // 4 
+    CACHE_SIZE = CACHE_W * CACHE_H
+    grid_cache = [0] * CACHE_SIZE
+    
     # grid 2d array of values 
     grid = []
     buffer_size = 4
@@ -117,13 +126,20 @@ def core1_thread():
     grid_w = GRID_W
     grid_size = GRID_SIZE
 
+    resize_func = resize.resize_array_1d
+    cache_w = CACHE_W
+    cache_size = CACHE_SIZE
+
     g = [0] * grid_size
+    gc = [0] * cache_size
     while True:
         before = time.ticks_ms()
-        z = t << 10
+        z = t << 8
 
-        for i in range(grid_size):
-            g[i] = (noise_func((i % grid_w) << 11, (i // grid_w) << 11, z) + 65536) >> 9
+        for i in range(cache_size):
+            gc[i] = (noise_func((i % cache_w) << 14, (i // cache_w) << 14, z) + 65536) >> 9
+
+        resize_func(g, grid_w, gc, cache_w)
 
         lock.acquire()
         grid[write_index] = g
