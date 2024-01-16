@@ -23,6 +23,15 @@ class AsciiChain:
         self.particles = [
             Particle(display, source, velocity, acceleration, scale)
         ]
+        self.length = length
+        for _ in range(length - 1):
+            self.particles.append(
+                Particle(
+                    display,
+                    source,
+                )
+            )
+            self.particles[-1].is_alive = False
         self.source = source
         self.char_height = char_height
         self.size = char_height * scale
@@ -30,25 +39,28 @@ class AsciiChain:
         self.chain = RigidChain(self.particles, distance = self.size)
         self.chars: [int] = [random_char() for _ in range(length)]
         self.char_rate = char_rate
-        self.length = length
         self.head_colour = head_colour
         self.tail_colours = tail_colours
         self.last_char_ms = ticks_ms()
+        self.tail = 0
 
-    def update(self, dt: float = 1.0):
-        if len(self.particles) < len(self.chars):
+    def update(self):
+        tail = self.tail
+        if tail < self.length - 1:
             if len(self.particles) > 0:
-                last_position = self.particles[-1].position
+                last_position = self.particles[tail].position
             else:
                 last_position = self.source
 
             # add a new particle if the last one is far enough away
             distance_from_source = last_position.subtract(self.source).length()
             if distance_from_source > self.size:
-                self.particles.append(Particle(self.display, self.source))
-                self.chain = RigidChain(self.particles, distance = self.size)
-
-        self.chain.update(dt)
+                # self.particles[tail].position = self.source
+                self.particles[tail].is_alive = True
+                self.tail += 1
+                # self.particles.append(Particle(self.display, self.source))
+                # self.chain = RigidChain(self.particles, distance = self.size)
+        self.chain.update()
 
         # set a new head character if enough time has passed
         if ticks_ms() - self.last_char_ms > self.char_rate:
@@ -58,20 +70,17 @@ class AsciiChain:
             self.last_char_ms = ticks_ms()
 
     def reset(self):
-        self.length = random.randint(5, 10)
         head = self.particles[0]
         head.position = self.source
         head.velocity = random_vector(5.0)
         head.acceleration = random_vector(0.5)
-        self.particles = [head]
-        self.scale = random.uniform(1, 3)
-        self.size = self.scale * self.char_height
+        head.is_alive = True
+        self.tail = 0
         self.chars = [random_char() for i in range(self.length)]
         self.char_rate = random.uniform(50, 250) * (1.0 / head.velocity.length()) + 50
         # self.char_rate = 150
         # print(f"char_rate: {self.char_rate}")
         self.last_char_ms = ticks_ms()
-        self.age = 0
 
     def is_offscreen(self) -> bool:
         # loop through all particles and return true if all are offscreen
@@ -87,6 +96,8 @@ class AsciiChain:
         length = len(self.particles)
         colours_length = len(self.tail_colours)
         for particle in self.particles:
+            if not particle.is_alive:
+                continue
             if i == 0:
                 display.set_pen(self.head_colour)
             else:
