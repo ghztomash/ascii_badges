@@ -36,10 +36,10 @@ class RigidChain:
             for i in range(len(self.particles) - 1)
         ]
 
-    def update(self, dt=1.0):
+    def update(self):
         # Update the positions of the particles
         for particle in self.particles:
-            particle.update(dt)
+            particle.update()
 
         # Enforce the constraints of the rigid joints
         for joint in self.joints:
@@ -105,11 +105,11 @@ class SpringChain:
             for i in range(len(self.particles) - 1)
         ]
 
-    def update(self, dt=1.0):
+    def update(self):
         # Apply the forces exerted by the springs
         for spring in self.springs:
             spring.apply_force()
 
         # Update the positions of the particles
         for particle in self.particles:
-            particle.update(dt)
+            particle.update()
