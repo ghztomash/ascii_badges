@@ -52,7 +52,6 @@ class Particle:
         acceleration: Vector = Vector(0, 0),
         scale=1.0,
         is_anchor: bool = False,
-        lifetime=100.0,
     ):
         self.display = display
         (self.width, self.height) = display.get_bounds()
@@ -61,27 +60,21 @@ class Particle:
         self.velocity = velocity
         self.acceleration = acceleration
         self.scale = scale
-        self.age = 0
-        self.lifetime = lifetime
         self.last_angle = velocity.angle()
         self.last_distance = velocity.length()
+        self.is_alive = True
 
-    def update(self, dt: float = 1.0):
+    def update(self):
         if self.is_anchor:
             return
         # Update velocity
-        self.velocity += self.acceleration * dt
+        self.velocity += self.acceleration
         # Update position
-        self.position += self.velocity * dt
-        # Update lifetime
-        self.age += dt
+        self.position += self.velocity
         # last position angle
         self.last_angle = self.velocity.angle()
         # distance from last position
         self.last_distance = self.velocity.dot(self.velocity)
-
-    def is_alive(self) -> bool:
-        return self.age < self.lifetime
 
     def is_offscreen(self) -> bool:
         return (
