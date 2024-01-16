@@ -144,7 +144,7 @@ class TuftyBoard:
         return self.fps
 
     @micropython.native
-    def draw_fps(self, scale=1):
+    def draw_fps(self, scale=2):
         if not self.on_usb:
             return
         self.display.text("fps: {:.2f}".format(self.fps), 0, 0, scale=scale)
