@@ -31,7 +31,7 @@ WHITE = display.create_pen(255, 255, 255)
 BLACK = display.create_pen(0, 0, 0)
 
 # generate a list of pens with varying brightness values
-magenta = colours.Colour(0xff, 0x79, 0xc6).set_saturation(1.0)
+magenta = colours.Colour(0xff, 0x79, 0xc6)
 PENS = magenta.create_fade(display, 8)
 
 ascii_chars = "$@B%8&MW#*hokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^`"
@@ -181,7 +181,7 @@ def draw_debug():
     ly += 20
     display.text(f"{GRID_W}x{GRID_H} grid of {GRID_SIZE} pixels", 0, ly)
 
-setup(scale=2)
+setup(scale=3)
 _thread.start_new_thread(core1_thread, ())
 
 while True:

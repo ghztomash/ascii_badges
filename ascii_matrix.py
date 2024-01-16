@@ -38,7 +38,7 @@ VIOLET = display.create_pen(115, 41, 130)
 INDIGO = display.create_pen(36, 64, 142)
 
 # generate a list of pens with varying brightness values
-magenta = colours.Colour(0xff, 0x79, 0xc6).set_saturation(1.0)
+magenta = colours.Colour(0xbd, 0x93, 0xf9)
 PENS = magenta.create_fade(display, 8)
 
 FONTS = ["bitmap6", "bitmap8"]

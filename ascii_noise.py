@@ -22,26 +22,16 @@ print(f"width: {WIDTH}, height: {HEIGHT}")
 print(f"grid_width: {GRID_WIDTH}, grid_height: {GRID_HEIGHT}")
 
 # List of available pen colours, add more if necessary
-RED = display.create_pen(209, 34, 41)
-ORANGE = display.create_pen(246, 138, 30)
-YELLOW = display.create_pen(255, 216, 0)
-GREEN = display.create_pen(0, 121, 64)
-INDIGO = display.create_pen(36, 64, 142)
-VIOLET = display.create_pen(115, 41, 130)
+RED = display.create_pen(0xff, 0x55, 0x55)
+GREEN = display.create_pen(0x50, 0xfa, 0x7b)
 WHITE = display.create_pen(255, 255, 255)
-PINK = display.create_pen(255, 175, 200)
-BLUE = display.create_pen(116, 215, 238)
-BROWN = display.create_pen(97, 57, 21)
 BLACK = display.create_pen(0, 0, 0)
-GREY = display.create_pen(33, 32, 32)
-MAGENTA = display.create_pen(255, 33, 140)
-CYAN = display.create_pen(33, 177, 255)
 
 FONTS = ["bitmap6", "bitmap8"]
 ascii_chars = "$@B%8&MW#*haokbdpqwmZO0QLJCJYXzcvunxrjft/\\|)(1}{][?-_+~i!lI;:,\"^`"
 
 # generate a list of pens with varying brightness values
-magenta = colours.Colour(255, 33, 140).set_saturation(1.0)
+magenta = colours.Colour(0xff, 0x79, 0xc6)
 PENS = magenta.create_fade(display, 8)
 
 noise_size = (GRID_WIDTH/8, GRID_HEIGHT/8)
@@ -143,7 +133,7 @@ while True:
     display.clear()
     display.set_pen(GREEN)
     tufty.tick()
-    tufty.draw_fps()
+    tufty.draw_fps(scale = 2)
 
     x = r * sin(theta)
     y = r * cos(theta)
