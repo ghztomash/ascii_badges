@@ -49,7 +49,7 @@ class AsciiChain:
 
     def update(self):
         tail = self.tail
-        if tail < self.length - 1:
+        if tail < self.length:
             if len(self.particles) > 0:
                 last_position = self.particles[tail].position
             else:
@@ -117,7 +117,7 @@ class AsciiChain:
                 display.set_pen(self.tail_colours[ci])
 
             display.character(
-                self.chars[i], int(particle.position.x), int(particle.position.y), scale=int(self.scale)
+                self.chars[i], int(particle.position.x - self.size/4.0), int(particle.position.y - self.size/2.0), scale=int(self.scale)
             )
             i+=1
         # self.display.text(''.join([chr(c) for c in self.chars]), int(self.position.x), int(self.position.y), scale = self.size)
