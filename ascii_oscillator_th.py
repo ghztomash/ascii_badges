@@ -2,6 +2,7 @@ import tuftyboard
 import time
 import colours
 import oscillator
+import random
 import _thread
 
 from particles import Vector, AsciiChain, random_vector
@@ -43,29 +44,20 @@ PENS_CYAN = cyan.create_fade(display, 8)
 PENS_INDIGO = indigo.create_fade(display, 8)
 PENS_BLUE = blue.create_fade(display, 8)
 
-MAX_SIZE = 8
-SAMPLE_RATE = 50
+MAX_SIZE = 2
+SAMPLE_RATE = 40
 
 osc = []
 for i in range(MAX_SIZE):
-    osc.append(oscillator.Oscillator(oscillator.fps_to_sample_rate(SAMPLE_RATE), 110.0*(i+1)))
+    osc.append(oscillator.Oscillator(oscillator.fps_to_sample_rate(SAMPLE_RATE), 220.0*(i+1)))
 
 oscFm = oscillator.Oscillator(oscillator.fps_to_sample_rate(SAMPLE_RATE), 11.0)
 
 center = Vector(WIDTH / 2, HEIGHT / 2)
 
 chains = []
-
-for i in range(MAX_SIZE):
-    if i % 4 == 0:
-        pens = PENS_VIOLET
-    elif i % 4 == 1:
-        pens = PENS_CYAN
-    elif i % 4 == 2:
-        pens = PENS_INDIGO
-    else:
-        pens = PENS_BLUE
-    chains.append(AsciiChain(display, WHITE, pens, center, length=8))
+chains.append(AsciiChain(display, WHITE, PENS_VIOLET, center, scale=1, length=32, char_rate=random.randint(80,150)))
+chains.append(AsciiChain(display, WHITE, PENS_CYAN, center, scale=2, length=16, char_rate=random.randint(100,200)))
 
 for chain in chains:
     chain.reset()
@@ -85,8 +77,8 @@ def core1_thread():
         for i, c in enumerate(osc):
             c.set_frequency(110.0*(i+1) + oscFm.get_sin_value()*10.0)
             c.tick()
-            x = int(((osc[(i+1)%len(osc)].get_sin_value()+1.0)/2.0) * WIDTH)
-            y = int(((osc[(i*3)%len(osc)].get_cos_value()+1.0)/2.0) * HEIGHT)
+            x = int(osc[(i+1)%len(osc)].get_sin_value() * WIDTH/2.0 + center.x)
+            y = int(osc[(i)%len(osc)].get_cos_value() * HEIGHT/2.0 + center.y)
             lock.acquire()
             chains[i].particles[0].position = Vector(x, y)
             lock.release()
